@@ -1,0 +1,28 @@
+services:
+  api:
+    build: .
+    ports:
+      - "4000:4000"
+    environment:
+      NODE_ENV: development
+      PORT: 4000
+      DATABASE_URL: postgresql://postgres:postgres@db:5432/nfs
+      CORS_ORIGIN: http://localhost:3000
+    depends_on:
+      - db
+    volumes:
+      - ./storage/uploads:/app/storage/uploads
+
+  db:
+    image: postgres:16-alpine
+    ports:
+      - "54322:5432"
+    environment:
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: postgres
+      POSTGRES_DB: nfs
+    volumes:
+      - nfs_pg_data:/var/lib/postgresql/data
+
+volumes:
+  nfs_pg_data:

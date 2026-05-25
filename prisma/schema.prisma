@@ -1,0 +1,73 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+enum CarTier {
+  D
+  C
+  B
+  A
+  S
+  S_PLUS @map("S+")
+  X
+}
+
+model Car {
+  id           String   @id @default(cuid())
+  slug         String   @unique
+  name         String
+  description  String
+  tier         CarTier
+  featured     Boolean  @default(false)
+  imageUrl     String
+  topSpeed     Int
+  acceleration Float
+  createdAt    DateTime @default(now())
+  updatedAt    DateTime @updatedAt
+  garageItems  GarageItem[]
+}
+
+model NewsArticle {
+  id          String   @id @default(cuid())
+  slug        String   @unique
+  title       String
+  excerpt     String
+  content     String   @db.Text
+  publishedAt DateTime
+  createdAt   DateTime @default(now())
+}
+
+model LeaderboardEntry {
+  id        String   @id @default(cuid())
+  rank      Int
+  pilot     String
+  carName   String
+  time      String
+  season    String   @default("2026-s1")
+  createdAt DateTime @default(now())
+
+  @@index([season, rank])
+}
+
+model User {
+  id        String       @id @default(cuid())
+  email     String       @unique
+  pilotName String
+  garage    GarageItem[]
+  createdAt DateTime     @default(now())
+}
+
+model GarageItem {
+  id     String @id @default(cuid())
+  userId String
+  carId  String
+  user   User   @relation(fields: [userId], references: [id], onDelete: Cascade)
+  car    Car    @relation(fields: [carId], references: [id], onDelete: Cascade)
+
+  @@unique([userId, carId])
+}
