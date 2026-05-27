@@ -4,6 +4,7 @@ import {
   getMe,
   patchProfileBirthDate,
   patchProfileName,
+  patchProfileRegional,
   postLogin,
   postPhoneSendCode,
   postPhoneVerifyCode,
@@ -18,6 +19,7 @@ import {
   startPhoneVerificationSchema,
   updateProfileBirthDateSchema,
   updateProfileNameSchema,
+  updateProfileRegionalSchema,
   verifyEmailCodeSchema,
   verifyPhoneCodeSchema,
 } from "./auth.schema.js";
@@ -34,6 +36,11 @@ authRouter.patch(
   "/profile/birth-date",
   validate(updateProfileBirthDateSchema),
   patchProfileBirthDate
+);
+authRouter.patch(
+  "/profile/region",
+  validate(updateProfileRegionalSchema),
+  patchProfileRegional
 );
 authRouter.post(
   "/profile/phone/send-code",

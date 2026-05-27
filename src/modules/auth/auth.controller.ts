@@ -7,6 +7,7 @@ import {
   startEmailVerification,
   updateProfileBirthDateFromAccessToken,
   updateProfileNameFromAccessToken,
+  updateProfileRegionalFromAccessToken,
   startPhoneVerificationFromAccessToken,
   verifyEmailCode,
   verifyPhoneCodeFromAccessToken,
@@ -82,6 +83,20 @@ export const patchProfileBirthDate = asyncHandler(async (req: Request, res: Resp
   }
   const { birthDate } = req.body as { birthDate: string };
   const result = await updateProfileBirthDateFromAccessToken(token, { birthDate });
+  return res.status(200).json(result);
+});
+
+export const patchProfileRegional = asyncHandler(async (req: Request, res: Response) => {
+  const token = getBearerToken(req);
+  if (!token) throw new AppError(401, "UNAUTHORIZED", "No autorizado");
+  const { countryCode, languageCode } = req.body as {
+    countryCode: string;
+    languageCode: string;
+  };
+  const result = await updateProfileRegionalFromAccessToken(token, {
+    countryCode,
+    languageCode,
+  });
   return res.status(200).json(result);
 });
 

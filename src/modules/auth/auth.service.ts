@@ -264,6 +264,7 @@ export async function registerUser(input: {
         pilot_name: eaId,
         birth_date: birthDate,
         country_code: countryCode,
+        language_code: "es",
       });
 
       if (insertError) {
@@ -288,6 +289,7 @@ type ProfileRow = {
   last_name: string | null;
   birth_date: string | null;
   country_code: string | null;
+  language_code: string | null;
   phone_dial_code: string | null;
   phone_number: string | null;
   phone_verified: boolean | null;
@@ -307,7 +309,7 @@ async function getProfileForUser(
   const { data: profile } = await supabase
     .from("profiles")
     .select(
-      "pilot_name, first_name, last_name, birth_date, country_code, phone_dial_code, phone_number, phone_verified"
+      "pilot_name, first_name, last_name, birth_date, country_code, language_code, phone_dial_code, phone_number, phone_verified"
     )
     .eq("id", userId)
     .maybeSingle();
@@ -326,6 +328,7 @@ async function getProfileForUser(
     lastName: row?.last_name?.trim() || null,
     birthDate: normalizeBirthDate(row?.birth_date),
     countryCode: row?.country_code?.trim().toUpperCase() || null,
+    languageCode: row?.language_code?.trim().toLowerCase() || "es",
     phoneDialCode: dialCode,
     phoneNumber: phoneNumber || null,
     phoneVerified,
@@ -388,6 +391,7 @@ export async function getMeFromAccessToken(accessToken: string) {
     lastName: profile.lastName,
     birthDate: profile.birthDate,
     countryCode: profile.countryCode,
+    languageCode: profile.languageCode,
     phoneDialCode: profile.phoneDialCode,
     phoneMasked: profile.phoneMasked,
     phoneVerified: profile.phoneVerified,
@@ -618,6 +622,49 @@ export async function verifyPhoneCodeFromAccessToken(
     phoneDialCode: record.dialCode,
     phoneMasked: maskPhone(record.dialCode, record.phoneNumber),
     phoneVerified: true,
+  };
+}
+
+export async function updateProfileRegionalFromAccessToken(
+  accessToken: string,
+  input: { countryCode: string; languageCode: string }
+) {
+  const { supabase, user } = await getUserFromAccessToken(accessToken);
+  const countryCode = input.countryCode.trim().toUpperCase();
+  const languageCode = input.languageCode.trim().toLowerCase();
+
+  const { data: existing } = await supabase
+    .from("profiles")
+    .select("id")
+    .eq("id", user.id)
+    .maybeSingle();
+
+  const payload = { country_code: countryCode, language_code: languageCode };
+
+  if (!existing) {
+    const pilotName = await getPilotNameForUser(supabase, user.id, user.email);
+    const { error: insertError } = await supabase.from("profiles").insert({
+      id: user.id,
+      pilot_name: pilotName,
+      ...payload,
+    });
+    if (insertError) {
+      throw new AppError(502, "PROFILE_UPDATE_FAILED", "No se pudieron guardar los ajustes regionales");
+    }
+  } else {
+    const { error: updateError } = await supabase
+      .from("profiles")
+      .update(payload)
+      .eq("id", user.id);
+    if (updateError) {
+      throw new AppError(502, "PROFILE_UPDATE_FAILED", "No se pudieron guardar los ajustes regionales");
+    }
+  }
+
+  return {
+    ok: true as const,
+    countryCode,
+    languageCode,
   };
 }
 

@@ -49,3 +49,11 @@ export const verifyPhoneCodeSchema = z.object({
   code: z.string().trim().regex(/^\d{6}$/, "El código debe tener 6 dígitos"),
 });
 
+export const updateProfileRegionalSchema = z.object({
+  countryCode: z.string().trim().length(2, "País no válido"),
+  languageCode: z
+    .string()
+    .trim()
+    .regex(/^[a-z]{2}$/, "Idioma no válido"),
+});
+
