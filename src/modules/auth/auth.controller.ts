@@ -1,11 +1,13 @@
 import type { Request, Response } from "express";
 import { asyncHandler } from "../../shared/utils/asyncHandler.js";
 import {
+  getMeFromAccessToken,
   registerUser,
   signInWithEmailPassword,
   startEmailVerification,
   verifyEmailCode,
 } from "./auth.service.js";
+import { AppError } from "../../shared/errors/AppError.js";
 
 export const postStartEmailVerification = asyncHandler(async (req: Request, res: Response) => {
   const { email } = req.body as { email: string };
@@ -40,6 +42,18 @@ export const postLogin = asyncHandler(async (req: Request, res: Response) => {
     ok: true,
     accessToken: result.accessToken,
     refreshToken: result.refreshToken,
+    pilotName: result.pilotName,
+    email: result.email,
   });
+});
+
+export const getMe = asyncHandler(async (req: Request, res: Response) => {
+  const header = req.headers.authorization;
+  const token = header?.startsWith("Bearer ") ? header.slice(7).trim() : null;
+  if (!token) {
+    throw new AppError(401, "UNAUTHORIZED", "No autorizado");
+  }
+  const result = await getMeFromAccessToken(token);
+  return res.status(200).json(result);
 });
 

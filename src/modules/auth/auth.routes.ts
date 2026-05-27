@@ -1,6 +1,7 @@
 import { Router } from "express";
 import { validate } from "../../shared/middleware/validate.js";
 import {
+  getMe,
   postLogin,
   postRegister,
   postStartEmailVerification,
@@ -19,4 +20,5 @@ authRouter.post("/verification/start", validate(startEmailVerificationSchema), p
 authRouter.post("/verification/verify", validate(verifyEmailCodeSchema), postVerifyEmailCode);
 authRouter.post("/register", validate(registerUserSchema), postRegister);
 authRouter.post("/login", validate(loginSchema), postLogin);
+authRouter.get("/me", getMe);
 

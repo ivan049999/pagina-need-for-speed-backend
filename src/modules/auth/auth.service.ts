@@ -39,12 +39,6 @@ function maskEmail(email: string) {
   return `${head}***${tail}@${domain}`;
 }
 
-function maskEmailForLogin(email: string) {
-  const [user, domain] = email.split("@");
-  if (!user || !domain) return email;
-  return `${user.slice(0, 2)}*****@${domain}`;
-}
-
 function requireSupabase() {
   if (!isSupabaseConfigured()) {
     throw new AppError(
@@ -244,20 +238,61 @@ export async function registerUser(input: {
   return { ok: true as const, userId };
 }
 
+async function getPilotNameForUser(
+  supabase: NonNullable<ReturnType<typeof getSupabaseAdmin>>,
+  userId: string,
+  fallbackEmail?: string | null
+) {
+  const { data: profile } = await supabase
+    .from("profiles")
+    .select("pilot_name")
+    .eq("id", userId)
+    .maybeSingle();
+
+  if (profile?.pilot_name) return profile.pilot_name as string;
+
+  const emailPrefix = fallbackEmail?.split("@")[0];
+  return emailPrefix ?? "Piloto";
+}
+
 export async function signInWithEmailPassword(emailInput: string, password: string) {
   const email = normalizeEmail(emailInput);
   const supabase = requireSupabase();
 
   const { data, error } = await supabase.auth.signInWithPassword({ email, password });
 
-  if (error || !data.session) {
+  if (error || !data.session || !data.user) {
     throw new AppError(401, "INVALID_CREDENTIALS", "Correo o contraseña incorrectos");
   }
+
+  const pilotName = await getPilotNameForUser(supabase, data.user.id, data.user.email);
 
   return {
     ok: true as const,
     accessToken: data.session.access_token,
     refreshToken: data.session.refresh_token,
+    pilotName,
+    email: data.user.email ?? email,
+  };
+}
+
+export async function getMeFromAccessToken(accessToken: string) {
+  const supabase = requireSupabase();
+  const {
+    data: { user },
+    error,
+  } = await supabase.auth.getUser(accessToken);
+
+  if (error || !user) {
+    throw new AppError(401, "INVALID_SESSION", "Sesión no válida o caducada");
+  }
+
+  const pilotName = await getPilotNameForUser(supabase, user.id, user.email);
+
+  return {
+    ok: true as const,
+    email: user.email ?? "",
+    pilotName,
   };
 }
 
