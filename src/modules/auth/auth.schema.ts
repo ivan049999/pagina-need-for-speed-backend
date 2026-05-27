@@ -57,3 +57,26 @@ export const updateProfileRegionalSchema = z.object({
     .regex(/^[a-z]{2}$/, "Idioma no válido"),
 });
 
+export const verifyPasswordChangeCodeSchema = z.object({
+  code: z.string().trim().regex(/^\d{6}$/, "El código debe tener 6 dígitos"),
+});
+
+const profilePasswordSchema = z
+  .string()
+  .min(8, "La contraseña debe tener al menos 8 caracteres")
+  .max(64, "La contraseña no puede superar 64 caracteres")
+  .regex(
+    /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d).+$/,
+    "Debe incluir al menos una letra minúscula, una mayúscula y un número"
+  );
+
+export const updateProfilePasswordSchema = z
+  .object({
+    password: profilePasswordSchema,
+    confirmPassword: z.string().min(1, "Confirma tu contraseña"),
+  })
+  .refine((data) => data.password === data.confirmPassword, {
+    message: "Las contraseñas no coinciden",
+    path: ["confirmPassword"],
+  });
+

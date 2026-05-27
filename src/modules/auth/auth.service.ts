@@ -21,6 +21,8 @@ type PhoneVerificationRecord = VerificationRecord & {
 };
 
 const phoneStore = new Map<string, PhoneVerificationRecord>();
+const passwordStore = new Map<string, VerificationRecord>();
+const passwordChangeVerified = new Map<string, number>();
 
 const CODE_TTL_MS = 10 * 60 * 1000;
 const VERIFIED_EMAIL_TTL_MS = 30 * 60 * 1000;
@@ -666,5 +668,142 @@ export async function updateProfileRegionalFromAccessToken(
     countryCode,
     languageCode,
   };
+}
+
+async function sendPasswordChangeVerificationEmail(email: string, code: string) {
+  const resend = getResendClient();
+  if (!resend || !env.RESEND_FROM) {
+    console.warn(
+      `[auth] RESEND_API_KEY/RESEND_FROM no configurados; código cambio contraseña para ${maskEmail(email)}: ${code}`
+    );
+    return { sent: false as const };
+  }
+
+  const { data, error } = await resend.emails.send({
+    from: env.RESEND_FROM,
+    to: email,
+    subject: "Código para cambiar tu contraseña",
+    text: `Tu código para cambiar la contraseña es: ${code}\n\nCaduca en 10 minutos.`,
+  });
+
+  if (error) {
+    console.error("[auth] Error al enviar correo de cambio de contraseña:", error);
+    throw new AppError(502, "EMAIL_SEND_FAILED", "No se pudo enviar el correo de verificación");
+  }
+
+  if (env.NODE_ENV === "development") {
+    console.info(`[auth] Correo cambio contraseña enviado a ${maskEmail(email)} (id: ${data?.id ?? "—"})`);
+  }
+
+  return { sent: true as const };
+}
+
+function isPasswordChangeVerified(userId: string) {
+  const expiresAt = passwordChangeVerified.get(userId);
+  if (!expiresAt) return false;
+  if (Date.now() > expiresAt) {
+    passwordChangeVerified.delete(userId);
+    return false;
+  }
+  return true;
+}
+
+export async function startPasswordChangeFromAccessToken(accessToken: string) {
+  const { user } = await getUserFromAccessToken(accessToken);
+  if (!user.email) {
+    throw new AppError(400, "NO_EMAIL", "Tu cuenta no tiene correo electrónico asociado");
+  }
+
+  const email = normalizeEmail(user.email);
+  const now = Date.now();
+  const existing = passwordStore.get(user.id);
+  if (existing && now - existing.lastSentAtMs < RESEND_COOLDOWN_MS) {
+    return { ok: true as const };
+  }
+
+  const code = generateCode();
+  passwordStore.set(user.id, {
+    codeHash: sha256(code),
+    expiresAtMs: now + CODE_TTL_MS,
+    lastSentAtMs: now,
+    attemptsLeft: MAX_ATTEMPTS,
+  });
+  passwordChangeVerified.delete(user.id);
+
+  try {
+    const emailResult = await sendPasswordChangeVerificationEmail(email, code);
+    return {
+      ok: true as const,
+      delivery: emailResult.sent ? ("email" as const) : ("dev-console" as const),
+      message: emailResult.sent
+        ? undefined
+        : "Revisa la consola del backend: ahí verás el código de 6 dígitos.",
+    };
+  } catch (error) {
+    passwordStore.delete(user.id);
+    throw error;
+  }
+}
+
+export async function verifyPasswordChangeCodeFromAccessToken(
+  accessToken: string,
+  input: { code: string }
+) {
+  const { user } = await getUserFromAccessToken(accessToken);
+  const code = input.code.trim();
+  const now = Date.now();
+
+  const record = passwordStore.get(user.id);
+  if (!record) {
+    return { ok: false as const, reason: "CODE_INVALID_OR_EXPIRED" as const };
+  }
+
+  if (now > record.expiresAtMs) {
+    passwordStore.delete(user.id);
+    return { ok: false as const, reason: "CODE_INVALID_OR_EXPIRED" as const };
+  }
+
+  if (record.attemptsLeft <= 0) {
+    passwordStore.delete(user.id);
+    return { ok: false as const, reason: "TOO_MANY_ATTEMPTS" as const };
+  }
+
+  record.attemptsLeft -= 1;
+  passwordStore.set(user.id, record);
+
+  if (sha256(code) !== record.codeHash) {
+    return { ok: false as const, reason: "CODE_INVALID" as const };
+  }
+
+  passwordStore.delete(user.id);
+  passwordChangeVerified.set(user.id, now + VERIFIED_EMAIL_TTL_MS);
+  return { ok: true as const };
+}
+
+export async function updatePasswordFromAccessToken(
+  accessToken: string,
+  input: { password: string }
+) {
+  const { user } = await getUserFromAccessToken(accessToken);
+  if (!isPasswordChangeVerified(user.id)) {
+    throw new AppError(
+      403,
+      "PASSWORD_CHANGE_NOT_VERIFIED",
+      "Verifica tu identidad con el código enviado a tu correo antes de cambiar la contraseña"
+    );
+  }
+
+  const supabase = requireSupabase();
+  const { error } = await supabase.auth.admin.updateUserById(user.id, {
+    password: input.password,
+  });
+
+  if (error) {
+    console.error("[auth] No se pudo actualizar la contraseña:", error);
+    throw new AppError(502, "PASSWORD_UPDATE_FAILED", "No se pudo actualizar la contraseña");
+  }
+
+  passwordChangeVerified.delete(user.id);
+  return { ok: true as const };
 }
 

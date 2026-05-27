@@ -6,11 +6,14 @@ import {
   patchProfileName,
   patchProfileRegional,
   postLogin,
+  postPasswordSendCode,
+  postPasswordVerifyCode,
   postPhoneSendCode,
   postPhoneVerifyCode,
   postRegister,
   postStartEmailVerification,
   postVerifyEmailCode,
+  patchProfilePassword,
 } from "./auth.controller.js";
 import {
   loginSchema,
@@ -19,8 +22,10 @@ import {
   startPhoneVerificationSchema,
   updateProfileBirthDateSchema,
   updateProfileNameSchema,
+  updateProfilePasswordSchema,
   updateProfileRegionalSchema,
   verifyEmailCodeSchema,
+  verifyPasswordChangeCodeSchema,
   verifyPhoneCodeSchema,
 } from "./auth.schema.js";
 
@@ -51,5 +56,16 @@ authRouter.post(
   "/profile/phone/verify",
   validate(verifyPhoneCodeSchema),
   postPhoneVerifyCode
+);
+authRouter.post("/profile/password/send-code", postPasswordSendCode);
+authRouter.post(
+  "/profile/password/verify",
+  validate(verifyPasswordChangeCodeSchema),
+  postPasswordVerifyCode
+);
+authRouter.patch(
+  "/profile/password",
+  validate(updateProfilePasswordSchema),
+  patchProfilePassword
 );
 

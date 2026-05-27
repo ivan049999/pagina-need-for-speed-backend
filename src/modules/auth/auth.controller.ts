@@ -8,8 +8,11 @@ import {
   updateProfileBirthDateFromAccessToken,
   updateProfileNameFromAccessToken,
   updateProfileRegionalFromAccessToken,
+  startPasswordChangeFromAccessToken,
   startPhoneVerificationFromAccessToken,
+  updatePasswordFromAccessToken,
   verifyEmailCode,
+  verifyPasswordChangeCodeFromAccessToken,
   verifyPhoneCodeFromAccessToken,
 } from "./auth.service.js";
 import { AppError } from "../../shared/errors/AppError.js";
@@ -121,6 +124,32 @@ export const postPhoneVerifyCode = asyncHandler(async (req: Request, res: Respon
   if (!result.ok) {
     return res.status(400).json({ ok: false, code: result.reason });
   }
+  return res.status(200).json(result);
+});
+
+export const postPasswordSendCode = asyncHandler(async (req: Request, res: Response) => {
+  const token = getBearerToken(req);
+  if (!token) throw new AppError(401, "UNAUTHORIZED", "No autorizado");
+  const result = await startPasswordChangeFromAccessToken(token);
+  return res.status(200).json(result);
+});
+
+export const postPasswordVerifyCode = asyncHandler(async (req: Request, res: Response) => {
+  const token = getBearerToken(req);
+  if (!token) throw new AppError(401, "UNAUTHORIZED", "No autorizado");
+  const { code } = req.body as { code: string };
+  const result = await verifyPasswordChangeCodeFromAccessToken(token, { code });
+  if (!result.ok) {
+    return res.status(400).json({ ok: false, code: result.reason });
+  }
+  return res.status(200).json(result);
+});
+
+export const patchProfilePassword = asyncHandler(async (req: Request, res: Response) => {
+  const token = getBearerToken(req);
+  if (!token) throw new AppError(401, "UNAUTHORIZED", "No autorizado");
+  const { password } = req.body as { password: string; confirmPassword: string };
+  const result = await updatePasswordFromAccessToken(token, { password });
   return res.status(200).json(result);
 });
 
