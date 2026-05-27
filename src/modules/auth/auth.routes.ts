@@ -10,6 +10,10 @@ import {
   postPasswordVerifyCode,
   postPhoneSendCode,
   postPhoneVerifyCode,
+  postSecondaryEmailSendCode,
+  postSecondaryEmailVerifyCode,
+  postTwoFactorSendCode,
+  postTwoFactorVerifyCode,
   postRegister,
   postStartEmailVerification,
   postVerifyEmailCode,
@@ -26,7 +30,10 @@ import {
   updateProfileRegionalSchema,
   verifyEmailCodeSchema,
   verifyPasswordChangeCodeSchema,
+  startSecondaryEmailSchema,
   verifyPhoneCodeSchema,
+  verifySecondaryEmailCodeSchema,
+  verifyTwoFactorCodeSchema,
 } from "./auth.schema.js";
 
 export const authRouter = Router();
@@ -67,5 +74,21 @@ authRouter.patch(
   "/profile/password",
   validate(updateProfilePasswordSchema),
   patchProfilePassword
+);
+authRouter.post("/profile/two-factor/send-code", postTwoFactorSendCode);
+authRouter.post(
+  "/profile/two-factor/verify",
+  validate(verifyTwoFactorCodeSchema),
+  postTwoFactorVerifyCode
+);
+authRouter.post(
+  "/profile/secondary-email/send-code",
+  validate(startSecondaryEmailSchema),
+  postSecondaryEmailSendCode
+);
+authRouter.post(
+  "/profile/secondary-email/verify",
+  validate(verifySecondaryEmailCodeSchema),
+  postSecondaryEmailVerifyCode
 );
 

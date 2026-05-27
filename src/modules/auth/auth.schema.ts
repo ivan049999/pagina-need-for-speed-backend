@@ -61,6 +61,18 @@ export const verifyPasswordChangeCodeSchema = z.object({
   code: z.string().trim().regex(/^\d{6}$/, "El código debe tener 6 dígitos"),
 });
 
+export const verifyTwoFactorCodeSchema = z.object({
+  code: z.string().trim().regex(/^\d{6}$/, "El código debe tener 6 dígitos"),
+});
+
+export const startSecondaryEmailSchema = z.object({
+  email: z.string().trim().email("Introduce un correo electrónico válido"),
+});
+
+export const verifySecondaryEmailCodeSchema = z.object({
+  code: z.string().trim().regex(/^\d{6}$/, "El código debe tener 6 dígitos"),
+});
+
 const profilePasswordSchema = z
   .string()
   .min(8, "La contraseña debe tener al menos 8 caracteres")

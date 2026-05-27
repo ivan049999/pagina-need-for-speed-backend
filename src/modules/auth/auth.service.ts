@@ -23,6 +23,13 @@ type PhoneVerificationRecord = VerificationRecord & {
 const phoneStore = new Map<string, PhoneVerificationRecord>();
 const passwordStore = new Map<string, VerificationRecord>();
 const passwordChangeVerified = new Map<string, number>();
+const twoFactorStore = new Map<string, VerificationRecord>();
+
+type SecondaryEmailVerificationRecord = VerificationRecord & {
+  email: string;
+};
+
+const secondaryEmailStore = new Map<string, SecondaryEmailVerificationRecord>();
 
 const CODE_TTL_MS = 10 * 60 * 1000;
 const VERIFIED_EMAIL_TTL_MS = 30 * 60 * 1000;
@@ -95,6 +102,21 @@ function getResendClient() {
   return new Resend(env.RESEND_API_KEY);
 }
 
+/** En desarrollo, si Resend falla, registra el código en consola en lugar de devolver 502. */
+function handleResendFailure(
+  error: unknown,
+  context: { label: string; to: string; code: string }
+): void {
+  console.error(`[auth] Error al enviar ${context.label}:`, error);
+  if (env.NODE_ENV === "development") {
+    console.warn(
+      `[auth] Resend falló en desarrollo; código (${context.label}) para ${maskEmail(context.to)}: ${context.code}`
+    );
+    return;
+  }
+  throw new AppError(502, "EMAIL_SEND_FAILED", "No se pudo enviar el correo de verificación");
+}
+
 export async function startEmailVerification(emailInput: string) {
   const email = normalizeEmail(emailInput);
   const now = Date.now();
@@ -131,9 +153,12 @@ export async function startEmailVerification(emailInput: string) {
   });
 
   if (error) {
+    if (env.NODE_ENV === "development") {
+      handleResendFailure(error, { label: "verificación registro", to: email, code });
+      return { ok: true };
+    }
     store.delete(email);
-    console.error("[auth] Error al enviar correo con Resend:", error);
-    throw new AppError(502, "EMAIL_SEND_FAILED", "No se pudo enviar el correo de verificación");
+    handleResendFailure(error, { label: "verificación registro", to: email, code });
   }
 
   if (env.NODE_ENV === "development") {
@@ -295,6 +320,10 @@ type ProfileRow = {
   phone_dial_code: string | null;
   phone_number: string | null;
   phone_verified: boolean | null;
+  two_factor_enabled: boolean | null;
+  two_factor_method: string | null;
+  secondary_email: string | null;
+  secondary_email_verified: boolean | null;
 };
 
 function normalizeBirthDate(value: string | null | undefined): string | null {
@@ -311,7 +340,7 @@ async function getProfileForUser(
   const { data: profile } = await supabase
     .from("profiles")
     .select(
-      "pilot_name, first_name, last_name, birth_date, country_code, language_code, phone_dial_code, phone_number, phone_verified"
+      "pilot_name, first_name, last_name, birth_date, country_code, language_code, phone_dial_code, phone_number, phone_verified, two_factor_enabled, two_factor_method, secondary_email, secondary_email_verified"
     )
     .eq("id", userId)
     .maybeSingle();
@@ -336,6 +365,14 @@ async function getProfileForUser(
     phoneVerified,
     phoneMasked:
       dialCode && phoneNumber ? maskPhone(dialCode, phoneNumber) : null,
+    twoFactorEnabled: Boolean(row?.two_factor_enabled),
+    twoFactorMethod: row?.two_factor_method?.trim() || null,
+    secondaryEmail: row?.secondary_email?.trim() || null,
+    secondaryEmailVerified: Boolean(row?.secondary_email_verified && row?.secondary_email),
+    secondaryEmailMasked:
+      row?.secondary_email?.trim() && row?.secondary_email_verified
+        ? maskEmail(normalizeEmail(row.secondary_email))
+        : null,
   };
 }
 
@@ -397,6 +434,9 @@ export async function getMeFromAccessToken(accessToken: string) {
     phoneDialCode: profile.phoneDialCode,
     phoneMasked: profile.phoneMasked,
     phoneVerified: profile.phoneVerified,
+    twoFactorEnabled: profile.twoFactorEnabled,
+    secondaryEmailMasked: profile.secondaryEmailMasked,
+    secondaryEmailVerified: profile.secondaryEmailVerified,
     memberSinceYear,
     emailVerified: Boolean(user.email_confirmed_at),
   };
@@ -687,8 +727,8 @@ async function sendPasswordChangeVerificationEmail(email: string, code: string) 
   });
 
   if (error) {
-    console.error("[auth] Error al enviar correo de cambio de contraseña:", error);
-    throw new AppError(502, "EMAIL_SEND_FAILED", "No se pudo enviar el correo de verificación");
+    handleResendFailure(error, { label: "cambio de contraseña", to: email, code });
+    return { sent: false as const };
   }
 
   if (env.NODE_ENV === "development") {
@@ -805,5 +845,283 @@ export async function updatePasswordFromAccessToken(
 
   passwordChangeVerified.delete(user.id);
   return { ok: true as const };
+}
+
+async function sendTwoFactorVerificationEmail(email: string, code: string) {
+  const resend = getResendClient();
+  if (!resend || !env.RESEND_FROM) {
+    console.warn(
+      `[auth] RESEND no configurado; código 2FA para ${maskEmail(email)}: ${code}`
+    );
+    return { sent: false as const };
+  }
+
+  const { data, error } = await resend.emails.send({
+    from: env.RESEND_FROM,
+    to: email,
+    subject: "Código para activar la autenticación en dos pasos",
+    text: `Tu código para activar la autenticación en dos pasos es: ${code}\n\nCaduca en 10 minutos.`,
+  });
+
+  if (error) {
+    handleResendFailure(error, { label: "autenticación en dos pasos", to: email, code });
+    return { sent: false as const };
+  }
+
+  if (env.NODE_ENV === "development") {
+    console.info(`[auth] Correo 2FA enviado a ${maskEmail(email)} (id: ${data?.id ?? "—"})`);
+  }
+
+  return { sent: true as const };
+}
+
+export async function startTwoFactorFromAccessToken(accessToken: string) {
+  const { user } = await getUserFromAccessToken(accessToken);
+  if (!user.email) {
+    throw new AppError(400, "NO_EMAIL", "Tu cuenta no tiene correo electrónico asociado");
+  }
+
+  const email = normalizeEmail(user.email);
+  const now = Date.now();
+  const existing = twoFactorStore.get(user.id);
+  if (existing && now - existing.lastSentAtMs < RESEND_COOLDOWN_MS) {
+    return { ok: true as const, delivery: "email" as const };
+  }
+
+  const code = generateCode();
+  twoFactorStore.set(user.id, {
+    codeHash: sha256(code),
+    expiresAtMs: now + CODE_TTL_MS,
+    lastSentAtMs: now,
+    attemptsLeft: MAX_ATTEMPTS,
+  });
+
+  try {
+    const emailResult = await sendTwoFactorVerificationEmail(email, code);
+    return {
+      ok: true as const,
+      delivery: emailResult.sent ? ("email" as const) : ("dev-console" as const),
+      message: emailResult.sent
+        ? undefined
+        : "Revisa la consola del backend: ahí verás el código de 6 dígitos.",
+    };
+  } catch (error) {
+    twoFactorStore.delete(user.id);
+    throw error;
+  }
+}
+
+export async function verifyTwoFactorFromAccessToken(
+  accessToken: string,
+  input: { code: string }
+) {
+  const { supabase, user } = await getUserFromAccessToken(accessToken);
+  const code = input.code.trim();
+  const now = Date.now();
+
+  const record = twoFactorStore.get(user.id);
+  if (!record) {
+    return { ok: false as const, reason: "CODE_INVALID_OR_EXPIRED" as const };
+  }
+
+  if (now > record.expiresAtMs) {
+    twoFactorStore.delete(user.id);
+    return { ok: false as const, reason: "CODE_INVALID_OR_EXPIRED" as const };
+  }
+
+  if (record.attemptsLeft <= 0) {
+    twoFactorStore.delete(user.id);
+    return { ok: false as const, reason: "TOO_MANY_ATTEMPTS" as const };
+  }
+
+  record.attemptsLeft -= 1;
+  twoFactorStore.set(user.id, record);
+
+  if (sha256(code) !== record.codeHash) {
+    return { ok: false as const, reason: "CODE_INVALID" as const };
+  }
+
+  twoFactorStore.delete(user.id);
+
+  const payload = {
+    two_factor_enabled: true,
+    two_factor_method: "email",
+  };
+
+  const { data: existing } = await supabase
+    .from("profiles")
+    .select("id")
+    .eq("id", user.id)
+    .maybeSingle();
+
+  if (!existing) {
+    const pilotName = await getPilotNameForUser(supabase, user.id, user.email);
+    const { error: insertError } = await supabase.from("profiles").insert({
+      id: user.id,
+      pilot_name: pilotName,
+      ...payload,
+    });
+    if (insertError) {
+      throw new AppError(502, "PROFILE_UPDATE_FAILED", "No se pudo activar la autenticación en dos pasos");
+    }
+  } else {
+    const { error: updateError } = await supabase
+      .from("profiles")
+      .update(payload)
+      .eq("id", user.id);
+    if (updateError) {
+      throw new AppError(502, "PROFILE_UPDATE_FAILED", "No se pudo activar la autenticación en dos pasos");
+    }
+  }
+
+  return { ok: true as const, twoFactorEnabled: true, twoFactorMethod: "email" as const };
+}
+
+async function sendSecondaryEmailVerification(email: string, code: string) {
+  const resend = getResendClient();
+  if (!resend || !env.RESEND_FROM) {
+    console.warn(
+      `[auth] RESEND no configurado; código correo secundario para ${maskEmail(email)}: ${code}`
+    );
+    return { sent: false as const };
+  }
+
+  const { data, error } = await resend.emails.send({
+    from: env.RESEND_FROM,
+    to: email,
+    subject: "Verifica tu correo electrónico secundario",
+    text: `Tu código de verificación es: ${code}\n\nCaduca en 10 minutos.`,
+  });
+
+  if (error) {
+    handleResendFailure(error, { label: "correo secundario", to: email, code });
+    return { sent: false as const };
+  }
+
+  if (env.NODE_ENV === "development") {
+    console.info(`[auth] Correo secundario enviado a ${maskEmail(email)} (id: ${data?.id ?? "—"})`);
+  }
+
+  return { sent: true as const };
+}
+
+export async function startSecondaryEmailFromAccessToken(
+  accessToken: string,
+  input: { email: string }
+) {
+  const { user } = await getUserFromAccessToken(accessToken);
+  const secondaryEmail = normalizeEmail(input.email);
+
+  if (!user.email) {
+    throw new AppError(400, "NO_EMAIL", "Tu cuenta no tiene correo principal asociado");
+  }
+
+  const primaryEmail = normalizeEmail(user.email);
+  if (secondaryEmail === primaryEmail) {
+    throw new AppError(
+      400,
+      "SAME_AS_PRIMARY_EMAIL",
+      "El correo secundario debe ser distinto del correo principal"
+    );
+  }
+
+  const now = Date.now();
+  const existing = secondaryEmailStore.get(user.id);
+  if (existing && now - existing.lastSentAtMs < RESEND_COOLDOWN_MS) {
+    return { ok: true as const, delivery: "email" as const };
+  }
+
+  const code = generateCode();
+  secondaryEmailStore.set(user.id, {
+    email: secondaryEmail,
+    codeHash: sha256(code),
+    expiresAtMs: now + CODE_TTL_MS,
+    lastSentAtMs: now,
+    attemptsLeft: MAX_ATTEMPTS,
+  });
+
+  try {
+    const emailResult = await sendSecondaryEmailVerification(secondaryEmail, code);
+    return {
+      ok: true as const,
+      delivery: emailResult.sent ? ("email" as const) : ("dev-console" as const),
+      message: emailResult.sent
+        ? undefined
+        : "Revisa la consola del backend: ahí verás el código de 6 dígitos.",
+    };
+  } catch (error) {
+    secondaryEmailStore.delete(user.id);
+    throw error;
+  }
+}
+
+export async function verifySecondaryEmailFromAccessToken(
+  accessToken: string,
+  input: { code: string }
+) {
+  const { supabase, user } = await getUserFromAccessToken(accessToken);
+  const code = input.code.trim();
+  const now = Date.now();
+
+  const record = secondaryEmailStore.get(user.id);
+  if (!record) {
+    return { ok: false as const, reason: "CODE_INVALID_OR_EXPIRED" as const };
+  }
+
+  if (now > record.expiresAtMs) {
+    secondaryEmailStore.delete(user.id);
+    return { ok: false as const, reason: "CODE_INVALID_OR_EXPIRED" as const };
+  }
+
+  if (record.attemptsLeft <= 0) {
+    secondaryEmailStore.delete(user.id);
+    return { ok: false as const, reason: "TOO_MANY_ATTEMPTS" as const };
+  }
+
+  record.attemptsLeft -= 1;
+  secondaryEmailStore.set(user.id, record);
+
+  if (sha256(code) !== record.codeHash) {
+    return { ok: false as const, reason: "CODE_INVALID" as const };
+  }
+
+  secondaryEmailStore.delete(user.id);
+
+  const payload = {
+    secondary_email: record.email,
+    secondary_email_verified: true,
+  };
+
+  const { data: existing } = await supabase
+    .from("profiles")
+    .select("id")
+    .eq("id", user.id)
+    .maybeSingle();
+
+  if (!existing) {
+    const pilotName = await getPilotNameForUser(supabase, user.id, user.email);
+    const { error: insertError } = await supabase.from("profiles").insert({
+      id: user.id,
+      pilot_name: pilotName,
+      ...payload,
+    });
+    if (insertError) {
+      throw new AppError(502, "PROFILE_UPDATE_FAILED", "No se pudo guardar el correo secundario");
+    }
+  } else {
+    const { error: updateError } = await supabase
+      .from("profiles")
+      .update(payload)
+      .eq("id", user.id);
+    if (updateError) {
+      throw new AppError(502, "PROFILE_UPDATE_FAILED", "No se pudo guardar el correo secundario");
+    }
+  }
+
+  return {
+    ok: true as const,
+    secondaryEmailMasked: maskEmail(record.email),
+    secondaryEmailVerified: true,
+  };
 }
 

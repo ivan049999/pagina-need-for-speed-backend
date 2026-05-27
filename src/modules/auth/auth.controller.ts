@@ -10,10 +10,14 @@ import {
   updateProfileRegionalFromAccessToken,
   startPasswordChangeFromAccessToken,
   startPhoneVerificationFromAccessToken,
+  startSecondaryEmailFromAccessToken,
+  startTwoFactorFromAccessToken,
   updatePasswordFromAccessToken,
   verifyEmailCode,
   verifyPasswordChangeCodeFromAccessToken,
   verifyPhoneCodeFromAccessToken,
+  verifySecondaryEmailFromAccessToken,
+  verifyTwoFactorFromAccessToken,
 } from "./auth.service.js";
 import { AppError } from "../../shared/errors/AppError.js";
 
@@ -150,6 +154,43 @@ export const patchProfilePassword = asyncHandler(async (req: Request, res: Respo
   if (!token) throw new AppError(401, "UNAUTHORIZED", "No autorizado");
   const { password } = req.body as { password: string; confirmPassword: string };
   const result = await updatePasswordFromAccessToken(token, { password });
+  return res.status(200).json(result);
+});
+
+export const postTwoFactorSendCode = asyncHandler(async (req: Request, res: Response) => {
+  const token = getBearerToken(req);
+  if (!token) throw new AppError(401, "UNAUTHORIZED", "No autorizado");
+  const result = await startTwoFactorFromAccessToken(token);
+  return res.status(200).json(result);
+});
+
+export const postTwoFactorVerifyCode = asyncHandler(async (req: Request, res: Response) => {
+  const token = getBearerToken(req);
+  if (!token) throw new AppError(401, "UNAUTHORIZED", "No autorizado");
+  const { code } = req.body as { code: string };
+  const result = await verifyTwoFactorFromAccessToken(token, { code });
+  if (!result.ok) {
+    return res.status(400).json({ ok: false, code: result.reason });
+  }
+  return res.status(200).json(result);
+});
+
+export const postSecondaryEmailSendCode = asyncHandler(async (req: Request, res: Response) => {
+  const token = getBearerToken(req);
+  if (!token) throw new AppError(401, "UNAUTHORIZED", "No autorizado");
+  const { email } = req.body as { email: string };
+  const result = await startSecondaryEmailFromAccessToken(token, { email });
+  return res.status(200).json(result);
+});
+
+export const postSecondaryEmailVerifyCode = asyncHandler(async (req: Request, res: Response) => {
+  const token = getBearerToken(req);
+  if (!token) throw new AppError(401, "UNAUTHORIZED", "No autorizado");
+  const { code } = req.body as { code: string };
+  const result = await verifySecondaryEmailFromAccessToken(token, { code });
+  if (!result.ok) {
+    return res.status(400).json({ ok: false, code: result.reason });
+  }
   return res.status(200).json(result);
 });
 
