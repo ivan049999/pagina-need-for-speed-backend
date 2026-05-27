@@ -401,3 +401,59 @@ export async function updateProfileNameFromAccessToken(
   };
 }
 
+export async function updateProfileBirthDateFromAccessToken(
+  accessToken: string,
+  input: { birthDate: string }
+) {
+  const supabase = requireSupabase();
+  const {
+    data: { user },
+    error,
+  } = await supabase.auth.getUser(accessToken);
+
+  if (error || !user) {
+    throw new AppError(401, "INVALID_SESSION", "Sesión no válida o caducada");
+  }
+
+  const birthDate = normalizeBirthDate(input.birthDate.trim());
+  if (!birthDate) {
+    throw new AppError(400, "INVALID_BIRTH_DATE", "Fecha de nacimiento no válida");
+  }
+
+  const { data: existing } = await supabase
+    .from("profiles")
+    .select("id")
+    .eq("id", user.id)
+    .maybeSingle();
+
+  if (!existing) {
+    const pilotName = await getPilotNameForUser(supabase, user.id, user.email);
+    const { error: insertError } = await supabase.from("profiles").insert({
+      id: user.id,
+      pilot_name: pilotName,
+      birth_date: birthDate,
+    });
+
+    if (insertError) {
+      console.error("[auth] No se pudo crear perfil con fecha de nacimiento:", insertError);
+      throw new AppError(502, "PROFILE_UPDATE_FAILED", "No se pudo guardar la fecha de nacimiento");
+    }
+  } else {
+    const { error: updateError } = await supabase
+      .from("profiles")
+      .update({ birth_date: birthDate })
+      .eq("id", user.id);
+
+    if (updateError) {
+      console.error("[auth] No se pudo actualizar fecha de nacimiento:", updateError);
+      throw new AppError(502, "PROFILE_UPDATE_FAILED", "No se pudo guardar la fecha de nacimiento");
+    }
+  }
+
+  return {
+    ok: true as const,
+    birthDate,
+    pilotName: await getPilotNameForUser(supabase, user.id, user.email),
+  };
+}
+

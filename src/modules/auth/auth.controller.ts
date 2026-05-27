@@ -5,6 +5,7 @@ import {
   registerUser,
   signInWithEmailPassword,
   startEmailVerification,
+  updateProfileBirthDateFromAccessToken,
   updateProfileNameFromAccessToken,
   verifyEmailCode,
 } from "./auth.service.js";
@@ -68,6 +69,17 @@ export const patchProfileName = asyncHandler(async (req: Request, res: Response)
   }
   const { firstName, lastName } = req.body as { firstName: string; lastName: string };
   const result = await updateProfileNameFromAccessToken(token, { firstName, lastName });
+  return res.status(200).json(result);
+});
+
+export const patchProfileBirthDate = asyncHandler(async (req: Request, res: Response) => {
+  const header = req.headers.authorization;
+  const token = header?.startsWith("Bearer ") ? header.slice(7).trim() : null;
+  if (!token) {
+    throw new AppError(401, "UNAUTHORIZED", "No autorizado");
+  }
+  const { birthDate } = req.body as { birthDate: string };
+  const result = await updateProfileBirthDateFromAccessToken(token, { birthDate });
   return res.status(200).json(result);
 });
 

@@ -33,3 +33,10 @@ export const updateProfileNameSchema = z.object({
   lastName: z.string().trim().min(1, "Escribe tu apellido").max(64),
 });
 
+export const updateProfileBirthDateSchema = z.object({
+  birthDate: z
+    .string()
+    .trim()
+    .regex(/^\d{4}-\d{2}-\d{2}$/, "Fecha de nacimiento no válida"),
+});
+
