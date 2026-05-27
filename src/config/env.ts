@@ -11,6 +11,12 @@ const envSchema = z.object({
   SUPABASE_SERVICE_ROLE_KEY: z.string().min(1).optional(),
   RESEND_API_KEY: z.string().min(1).optional(),
   RESEND_FROM: z.string().min(1).optional(),
+  TWILIO_ACCOUNT_SID: z.string().min(1).optional(),
+  TWILIO_AUTH_TOKEN: z.string().min(1).optional(),
+  TWILIO_PHONE_NUMBER: z
+    .string()
+    .regex(/^\+\d{8,15}$/, "Formato E.164, ej. +15005550006")
+    .optional(),
 });
 
 export const env = envSchema.parse(process.env);

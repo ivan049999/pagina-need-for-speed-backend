@@ -7,7 +7,9 @@ import {
   startEmailVerification,
   updateProfileBirthDateFromAccessToken,
   updateProfileNameFromAccessToken,
+  startPhoneVerificationFromAccessToken,
   verifyEmailCode,
+  verifyPhoneCodeFromAccessToken,
 } from "./auth.service.js";
 import { AppError } from "../../shared/errors/AppError.js";
 
@@ -80,6 +82,30 @@ export const patchProfileBirthDate = asyncHandler(async (req: Request, res: Resp
   }
   const { birthDate } = req.body as { birthDate: string };
   const result = await updateProfileBirthDateFromAccessToken(token, { birthDate });
+  return res.status(200).json(result);
+});
+
+function getBearerToken(req: Request) {
+  const header = req.headers.authorization;
+  return header?.startsWith("Bearer ") ? header.slice(7).trim() : null;
+}
+
+export const postPhoneSendCode = asyncHandler(async (req: Request, res: Response) => {
+  const token = getBearerToken(req);
+  if (!token) throw new AppError(401, "UNAUTHORIZED", "No autorizado");
+  const { dialCode, phoneNumber } = req.body as { dialCode: string; phoneNumber: string };
+  const result = await startPhoneVerificationFromAccessToken(token, { dialCode, phoneNumber });
+  return res.status(200).json(result);
+});
+
+export const postPhoneVerifyCode = asyncHandler(async (req: Request, res: Response) => {
+  const token = getBearerToken(req);
+  if (!token) throw new AppError(401, "UNAUTHORIZED", "No autorizado");
+  const { code } = req.body as { code: string };
+  const result = await verifyPhoneCodeFromAccessToken(token, { code });
+  if (!result.ok) {
+    return res.status(400).json({ ok: false, code: result.reason });
+  }
   return res.status(200).json(result);
 });
 

@@ -5,6 +5,8 @@ import {
   patchProfileBirthDate,
   patchProfileName,
   postLogin,
+  postPhoneSendCode,
+  postPhoneVerifyCode,
   postRegister,
   postStartEmailVerification,
   postVerifyEmailCode,
@@ -13,9 +15,11 @@ import {
   loginSchema,
   registerUserSchema,
   startEmailVerificationSchema,
+  startPhoneVerificationSchema,
   updateProfileBirthDateSchema,
   updateProfileNameSchema,
   verifyEmailCodeSchema,
+  verifyPhoneCodeSchema,
 } from "./auth.schema.js";
 
 export const authRouter = Router();
@@ -30,5 +34,15 @@ authRouter.patch(
   "/profile/birth-date",
   validate(updateProfileBirthDateSchema),
   patchProfileBirthDate
+);
+authRouter.post(
+  "/profile/phone/send-code",
+  validate(startPhoneVerificationSchema),
+  postPhoneSendCode
+);
+authRouter.post(
+  "/profile/phone/verify",
+  validate(verifyPhoneCodeSchema),
+  postPhoneVerifyCode
 );
 

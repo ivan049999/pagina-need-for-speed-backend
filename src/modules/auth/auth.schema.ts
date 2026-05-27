@@ -40,3 +40,12 @@ export const updateProfileBirthDateSchema = z.object({
     .regex(/^\d{4}-\d{2}-\d{2}$/, "Fecha de nacimiento no válida"),
 });
 
+export const startPhoneVerificationSchema = z.object({
+  dialCode: z.string().trim().regex(/^\+\d{1,4}$/, "Prefijo no válido"),
+  phoneNumber: z.string().trim().min(6).max(20),
+});
+
+export const verifyPhoneCodeSchema = z.object({
+  code: z.string().trim().regex(/^\d{6}$/, "El código debe tener 6 dígitos"),
+});
+
