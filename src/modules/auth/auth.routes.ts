@@ -2,6 +2,7 @@ import { Router } from "express";
 import { validate } from "../../shared/middleware/validate.js";
 import {
   getMe,
+  patchProfileName,
   postLogin,
   postRegister,
   postStartEmailVerification,
@@ -11,6 +12,7 @@ import {
   loginSchema,
   registerUserSchema,
   startEmailVerificationSchema,
+  updateProfileNameSchema,
   verifyEmailCodeSchema,
 } from "./auth.schema.js";
 
@@ -21,4 +23,5 @@ authRouter.post("/verification/verify", validate(verifyEmailCodeSchema), postVer
 authRouter.post("/register", validate(registerUserSchema), postRegister);
 authRouter.post("/login", validate(loginSchema), postLogin);
 authRouter.get("/me", getMe);
+authRouter.patch("/profile/name", validate(updateProfileNameSchema), patchProfileName);
 

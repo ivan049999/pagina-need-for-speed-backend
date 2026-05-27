@@ -153,10 +153,14 @@ export async function registerUser(input: {
   email: string;
   eaId: string;
   password: string;
+  birthDate: string;
+  countryCode: string;
 }) {
   const email = normalizeEmail(input.email);
   const eaId = input.eaId.trim();
   const password = input.password;
+  const birthDate = input.birthDate.trim();
+  const countryCode = input.countryCode.trim().toUpperCase();
 
   if (!isEmailVerified(email)) {
     throw new AppError(
@@ -210,7 +214,11 @@ export async function registerUser(input: {
     if (existingProfile) {
       const { error: profileError } = await supabase
         .from("profiles")
-        .update({ pilot_name: eaId })
+        .update({
+          pilot_name: eaId,
+          birth_date: birthDate,
+          country_code: countryCode,
+        })
         .eq("id", userId);
 
       if (profileError) {
@@ -220,6 +228,8 @@ export async function registerUser(input: {
       const { error: insertError } = await supabase.from("profiles").insert({
         id: userId,
         pilot_name: eaId,
+        birth_date: birthDate,
+        country_code: countryCode,
       });
 
       if (insertError) {
@@ -238,21 +248,51 @@ export async function registerUser(input: {
   return { ok: true as const, userId };
 }
 
-async function getPilotNameForUser(
+type ProfileRow = {
+  pilot_name: string | null;
+  first_name: string | null;
+  last_name: string | null;
+  birth_date: string | null;
+  country_code: string | null;
+};
+
+function normalizeBirthDate(value: string | null | undefined): string | null {
+  if (!value) return null;
+  const iso = value.slice(0, 10);
+  return /^\d{4}-\d{2}-\d{2}$/.test(iso) ? iso : null;
+}
+
+async function getProfileForUser(
   supabase: NonNullable<ReturnType<typeof getSupabaseAdmin>>,
   userId: string,
   fallbackEmail?: string | null
 ) {
   const { data: profile } = await supabase
     .from("profiles")
-    .select("pilot_name")
+    .select("pilot_name, first_name, last_name, birth_date, country_code")
     .eq("id", userId)
     .maybeSingle();
 
-  if (profile?.pilot_name) return profile.pilot_name as string;
-
+  const row = profile as ProfileRow | null;
   const emailPrefix = fallbackEmail?.split("@")[0];
-  return emailPrefix ?? "Piloto";
+  const pilotName = row?.pilot_name ?? emailPrefix ?? "Piloto";
+
+  return {
+    pilotName,
+    firstName: row?.first_name?.trim() || null,
+    lastName: row?.last_name?.trim() || null,
+    birthDate: normalizeBirthDate(row?.birth_date),
+    countryCode: row?.country_code?.trim().toUpperCase() || null,
+  };
+}
+
+async function getPilotNameForUser(
+  supabase: NonNullable<ReturnType<typeof getSupabaseAdmin>>,
+  userId: string,
+  fallbackEmail?: string | null
+) {
+  const profile = await getProfileForUser(supabase, userId, fallbackEmail);
+  return profile.pilotName;
 }
 
 export async function signInWithEmailPassword(emailInput: string, password: string) {
@@ -287,7 +327,7 @@ export async function getMeFromAccessToken(accessToken: string) {
     throw new AppError(401, "INVALID_SESSION", "Sesión no válida o caducada");
   }
 
-  const pilotName = await getPilotNameForUser(supabase, user.id, user.email);
+  const profile = await getProfileForUser(supabase, user.id, user.email);
   const memberSinceYear = user.created_at
     ? new Date(user.created_at).getFullYear()
     : new Date().getFullYear();
@@ -295,9 +335,69 @@ export async function getMeFromAccessToken(accessToken: string) {
   return {
     ok: true as const,
     email: user.email ?? "",
-    pilotName,
+    pilotName: profile.pilotName,
+    firstName: profile.firstName,
+    lastName: profile.lastName,
+    birthDate: profile.birthDate,
+    countryCode: profile.countryCode,
     memberSinceYear,
     emailVerified: Boolean(user.email_confirmed_at),
+  };
+}
+
+export async function updateProfileNameFromAccessToken(
+  accessToken: string,
+  input: { firstName: string; lastName: string }
+) {
+  const supabase = requireSupabase();
+  const {
+    data: { user },
+    error,
+  } = await supabase.auth.getUser(accessToken);
+
+  if (error || !user) {
+    throw new AppError(401, "INVALID_SESSION", "Sesión no válida o caducada");
+  }
+
+  const firstName = input.firstName.trim();
+  const lastName = input.lastName.trim();
+
+  const { data: existing } = await supabase
+    .from("profiles")
+    .select("id")
+    .eq("id", user.id)
+    .maybeSingle();
+
+  if (!existing) {
+    const pilotName = await getPilotNameForUser(supabase, user.id, user.email);
+    const { error: insertError } = await supabase.from("profiles").insert({
+      id: user.id,
+      pilot_name: pilotName,
+      first_name: firstName,
+      last_name: lastName,
+    });
+
+    if (insertError) {
+      console.error("[auth] No se pudo crear perfil con nombre:", insertError);
+      throw new AppError(502, "PROFILE_UPDATE_FAILED", "No se pudo guardar el nombre");
+    }
+  } else {
+    const { error: updateError } = await supabase
+      .from("profiles")
+      .update({ first_name: firstName, last_name: lastName })
+      .eq("id", user.id);
+
+    if (updateError) {
+      console.error("[auth] No se pudo actualizar nombre:", updateError);
+      throw new AppError(502, "PROFILE_UPDATE_FAILED", "No se pudo guardar el nombre");
+    }
+  }
+
+  return {
+    ok: true as const,
+    firstName,
+    lastName,
+    pilotName: await getPilotNameForUser(supabase, user.id, user.email),
   };
 }
 
