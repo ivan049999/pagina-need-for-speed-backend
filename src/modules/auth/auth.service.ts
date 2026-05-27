@@ -288,11 +288,16 @@ export async function getMeFromAccessToken(accessToken: string) {
   }
 
   const pilotName = await getPilotNameForUser(supabase, user.id, user.email);
+  const memberSinceYear = user.created_at
+    ? new Date(user.created_at).getFullYear()
+    : new Date().getFullYear();
 
   return {
     ok: true as const,
     email: user.email ?? "",
     pilotName,
+    memberSinceYear,
+    emailVerified: Boolean(user.email_confirmed_at),
   };
 }
 
