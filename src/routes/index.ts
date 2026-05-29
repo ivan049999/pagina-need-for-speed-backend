@@ -5,6 +5,7 @@ import { garageRouter } from "../modules/garage/garage.routes.js";
 import { healthRouter } from "../modules/health/health.routes.js";
 import { leaderboardRouter } from "../modules/leaderboard/leaderboard.routes.js";
 import { newsRouter } from "../modules/news/news.routes.js";
+import { gamesRouter } from "../modules/games/games.routes.js";
 
 export const apiRouter = Router();
 
@@ -14,3 +15,4 @@ apiRouter.use("/cars", carsRouter);
 apiRouter.use("/news", newsRouter);
 apiRouter.use("/leaderboard", leaderboardRouter);
 apiRouter.use("/garage", garageRouter);
+apiRouter.use("/games", gamesRouter);
