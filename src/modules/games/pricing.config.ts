@@ -25,4 +25,18 @@ export const GAME_PRICING: Record<string, GamePricingConfig> = {
       },
     },
   },
+  "need-for-speed-underground-2": {
+    slug: "need-for-speed-underground-2",
+    fallbackAmount: 9.99,
+    fallbackCurrency: "EUR",
+    sources: {
+      ea: {
+        url: "https://www.ea.com/es-es/games/need-for-speed/need-for-speed-underground-2",
+      },
+      cex: {
+        url: "https://es.webuy.com/search?q=Need+for+Speed+Underground+2",
+        productId: "need-for-speed-underground-2",
+      },
+    },
+  },
 };
