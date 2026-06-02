@@ -123,4 +123,32 @@ export const GAME_PRICING: Record<string, GamePricingConfig> = {
       },
     },
   },
+  "need-for-speed-shift": {
+    slug: "need-for-speed-shift",
+    fallbackAmount: 9.99,
+    fallbackCurrency: "EUR",
+    sources: {
+      ea: {
+        url: "https://www.ea.com/es-es/games/need-for-speed/need-for-speed-shift",
+      },
+      cex: {
+        url: "https://es.webuy.com/search?stext=need+for+speed+shift",
+        productId: "need-for-speed-shift",
+      },
+    },
+  },
+  "need-for-speed-hot-pursuit-2010": {
+    slug: "need-for-speed-hot-pursuit-2010",
+    fallbackAmount: 9.99,
+    fallbackCurrency: "EUR",
+    sources: {
+      ea: {
+        url: "https://www.ea.com/es-es/games/need-for-speed/need-for-speed-hot-pursuit",
+      },
+      cex: {
+        url: "https://es.webuy.com/search?stext=need+for+speed+hot+pursuit+2010",
+        productId: "need-for-speed-hot-pursuit-2010",
+      },
+    },
+  },
 };
