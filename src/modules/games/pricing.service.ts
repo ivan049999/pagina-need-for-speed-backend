@@ -47,7 +47,7 @@ async function fetchHtml(url: string): Promise<string> {
       signal: controller.signal,
     });
     if (!res.ok) {
-      throw new AppError(`No se pudo obtener precio (${res.status})`, 502);
+      throw new AppError(502, "PRICE_FETCH_FAILED", `No se pudo obtener precio (${res.status})`);
     }
     return res.text();
   } finally {
@@ -166,7 +166,7 @@ function buildResponse(
 export async function getGamePrice(slug: string): Promise<GamePriceResponse> {
   const config = GAME_PRICING[slug];
   if (!config) {
-    throw new AppError("Juego no configurado para precios dinámicos", 404);
+    throw new AppError(404, "GAME_NOT_CONFIGURED", "Juego no configurado para precios dinámicos");
   }
 
   const cached = cache.get(slug);
