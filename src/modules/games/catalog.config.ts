@@ -43,7 +43,8 @@ export const NFS_CATALOG: NfsCatalogEntry[] = [
   },
   {
     label: "Need for Speed™ Most Wanted (2012)",
-    href: "https://www.ea.com/es-es/games/need-for-speed/need-for-speed-most-wanted",
+    href: "/need-for-speed-most-wanted-2012",
+    slug: "need-for-speed-most-wanted-2012",
     releaseDate: "2012-11-30",
   },
   {

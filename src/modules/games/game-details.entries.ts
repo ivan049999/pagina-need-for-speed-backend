@@ -579,4 +579,55 @@ export const GAME_DETAILS_ENTRIES: Record<string, GameDetails> = {
     },
     rating: pegiRating(12, CARBON),
   },
+
+  "need-for-speed-most-wanted-2012": {
+    slug: "need-for-speed-most-wanted-2012",
+    source: "ea-official",
+    about: {
+      title: "Acerca del juego",
+      description:
+        "Need for Speed™ Most Wanted (2012), desarrollado por Criterion Games, reinventa la persecución en Fairhaven City: elige tu coche, evita a la policía con el sistema Autolog y compite por ser el piloto más buscado. Mundo abierto, carreras callejeras, power-ups y multijugador online para demostrar quién manda en la ciudad.",
+      platforms:
+        "PC, PlayStation 3, Xbox 360, PlayStation Vita, Wii U",
+      languages:
+        "Checo, Alemán, Inglés, Español, Francés, Italiano, Holandés, Sueco, Danés, Noruego, Finlandés, Polaco, Portugués, Ruso, Japonés",
+      publisher: "Electronic Arts",
+      releaseDate: "30 oct 2012",
+    },
+    systemRequirements: {
+      title: "Requisitos del sistema",
+      osLabel: "Windows",
+      minimum: [
+        {
+          label: "Sistema operativo",
+          value: "Windows Vista SP2 (64 bits) / Windows 7",
+        },
+        {
+          label: "Procesador",
+          value: "Core 2 Duo a 2,0 GHz o Athlon X2 a 2,4 GHz",
+        },
+        { label: "Memoria", value: "2 GB RAM" },
+        { label: "Disco duro", value: "10 GB de espacio libre" },
+        {
+          label: "Tarjeta gráfica",
+          value:
+            "512 MB, compatible con DirectX 10 (GeForce 8800 GT / Radeon HD 3870)",
+        },
+        { label: "Tarjeta de sonido", value: "Compatible con DirectX 10" },
+      ],
+      recommended: [
+        { label: "Sistema operativo", value: "Windows 7 (64 bits)" },
+        { label: "Procesador", value: "Core 2 Quad a 2,4 GHz o equivalente" },
+        { label: "Memoria", value: "4 GB RAM" },
+        { label: "Disco duro", value: "10 GB de espacio libre" },
+        {
+          label: "Tarjeta gráfica",
+          value:
+            "1 GB o superior, compatible con DirectX 11 (GeForce GTX 560 / Radeon HD 6950)",
+        },
+        { label: "Tarjeta de sonido", value: "Compatible con DirectX 11" },
+      ],
+    },
+    rating: pegiRating(12, CARBON),
+  },
 };
