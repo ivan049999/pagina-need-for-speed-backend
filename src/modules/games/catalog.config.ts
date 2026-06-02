@@ -48,7 +48,8 @@ export const NFS_CATALOG: NfsCatalogEntry[] = [
   },
   {
     label: "Need for Speed™ The Run",
-    href: "https://es.wikipedia.org/wiki/Need_for_Speed:_The_Run",
+    href: "/need-for-speed-the-run",
+    slug: "need-for-speed-the-run",
     releaseDate: "2011-11-15",
   },
   {
