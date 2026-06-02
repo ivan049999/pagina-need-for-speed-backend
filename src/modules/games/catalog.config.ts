@@ -53,7 +53,8 @@ export const NFS_CATALOG: NfsCatalogEntry[] = [
   },
   {
     label: "Need for Speed™ Shift 2 Unleashed",
-    href: "https://es.wikipedia.org/wiki/Need_for_Speed:_Shift_2_Unleashed",
+    href: "/need-for-speed-shift-2-unleashed",
+    slug: "need-for-speed-shift-2-unleashed",
     releaseDate: "2011-03-29",
   },
   {
