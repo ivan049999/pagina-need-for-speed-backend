@@ -151,4 +151,32 @@ export const GAME_PRICING: Record<string, GamePricingConfig> = {
       },
     },
   },
+  "need-for-speed-shift-2-unleashed": {
+    slug: "need-for-speed-shift-2-unleashed",
+    fallbackAmount: 9.99,
+    fallbackCurrency: "EUR",
+    sources: {
+      ea: {
+        url: "https://www.ea.com/es-es/games/need-for-speed/need-for-speed-shift-2-unleashed",
+      },
+      cex: {
+        url: "https://es.webuy.com/search?stext=need+for+speed+shift+2+unleashed",
+        productId: "need-for-speed-shift-2-unleashed",
+      },
+    },
+  },
+  "need-for-speed-the-run": {
+    slug: "need-for-speed-the-run",
+    fallbackAmount: 9.99,
+    fallbackCurrency: "EUR",
+    sources: {
+      ea: {
+        url: "https://www.ea.com/es-es/games/need-for-speed/need-for-speed-the-run",
+      },
+      cex: {
+        url: "https://es.webuy.com/search?stext=need+for+speed+the+run",
+        productId: "need-for-speed-the-run",
+      },
+    },
+  },
 };
