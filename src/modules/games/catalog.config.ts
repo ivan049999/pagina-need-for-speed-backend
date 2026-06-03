@@ -34,7 +34,8 @@ export const NFS_CATALOG: NfsCatalogEntry[] = [
   },
   {
     label: "Need for Speed™ No Limits",
-    href: "https://www.ea.com/es-es/games/need-for-speed/need-for-speed-no-limits",
+    href: "/need-for-speed-no-limits",
+    slug: "need-for-speed-no-limits",
     releaseDate: "2015-04-30",
   },
   {

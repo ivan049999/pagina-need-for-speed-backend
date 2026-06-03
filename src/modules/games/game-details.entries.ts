@@ -20,6 +20,8 @@ const NITRO = "/images/juegos-need-for-speed/Need-For-Speed-Nitro";
 const THE_RUN = "/images/juegos-need-for-speed/Need-For-Speed-The-Run";
 const RIVALS = "/images/juegos-need-for-speed/Need-For-Speed-Rivals";
 const NFS2015 = "/images/juegos-need-for-speed/Need-For-Speed-2015";
+const NO_LIMITS =
+  "/images/juegos-need-for-speed/Need-For-Speed-No-Limits";
 const SHIFT2 =
   "/images/juegos-need-for-speed/Need-For-Speed-Shift-2-Unleashed";
 /** Fichas verificadas (EA / Steam / documentación oficial). */
@@ -763,6 +765,66 @@ export const GAME_DETAILS_ENTRIES: Record<string, GameDetails> = {
           id: "violence",
           label: "Violence",
           iconSrc: `${NFS2015}/violence-Icono.png`,
+        },
+      ],
+    },
+  },
+
+  "need-for-speed-no-limits": {
+    slug: "need-for-speed-no-limits",
+    source: "ea-official",
+    about: {
+      title: "Acerca del juego",
+      description:
+        "Need for Speed™ No Limits, desarrollado por Firemonkeys Studios, lleva la saga a iOS y Android con carreras callejeras en Blackridge: personaliza coches legendarios, compite en eventos, desafía a rivales y progresa en una experiencia free-to-play con gráficos móviles de alto nivel y la esencia arcade de Need for Speed.",
+      platforms: "iOS, Android",
+      languages:
+        "Alemán, Inglés, Español, Francés, Italiano, Portugués, Ruso, Japonés, Coreano, Chino simplificado y otros",
+      publisher: "Electronic Arts",
+      releaseDate: "30 abr 2015",
+    },
+    systemRequirements: {
+      title: "Requisitos del sistema",
+      osLabel: "iOS",
+      minimum: [
+        { label: "Sistema operativo", value: "iOS 10.0 o posterior" },
+        {
+          label: "Dispositivo",
+          value: "iPhone, iPad o iPod touch compatibles",
+        },
+        { label: "Conexión", value: "Conexión a Internet obligatoria" },
+        {
+          label: "Almacenamiento",
+          value: "Espacio libre según versión en App Store",
+        },
+        {
+          label: "Notas",
+          value: "Compras dentro de la aplicación opcionales",
+        },
+      ],
+      recommended: [
+        { label: "Sistema operativo", value: "Android 4.4 o posterior" },
+        { label: "Dispositivo", value: "Smartphone o tablet ARM compatible" },
+        { label: "Conexión", value: "Conexión a Internet obligatoria" },
+        {
+          label: "Almacenamiento",
+          value: "Espacio libre según versión en Google Play",
+        },
+        {
+          label: "Notas",
+          value: "Compras dentro de la aplicación opcionales",
+        },
+      ],
+    },
+    rating: {
+      system: "pegi",
+      age: 12,
+      ageBadgeSrc: `${NO_LIMITS}/pegi12-icono.png`,
+      descriptors: [
+        {
+          id: "violence",
+          label: "Violence",
+          iconSrc: `${NO_LIMITS}/violence-Icono.png`,
         },
       ],
     },
