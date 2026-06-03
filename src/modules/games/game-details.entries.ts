@@ -19,6 +19,7 @@ const SHIFT = "/images/juegos-need-for-speed/Need-For-Speed-Shift";
 const NITRO = "/images/juegos-need-for-speed/Need-For-Speed-Nitro";
 const THE_RUN = "/images/juegos-need-for-speed/Need-For-Speed-The-Run";
 const RIVALS = "/images/juegos-need-for-speed/Need-For-Speed-Rivals";
+const NFS2015 = "/images/juegos-need-for-speed/Need-For-Speed-2015";
 const SHIFT2 =
   "/images/juegos-need-for-speed/Need-For-Speed-Shift-2-Unleashed";
 /** Fichas verificadas (EA / Steam / documentación oficial). */
@@ -704,6 +705,64 @@ export const GAME_DETAILS_ENTRIES: Record<string, GameDetails> = {
           id: "violence",
           label: "Violence",
           iconSrc: `${CARBON}/violence-Icono.png`,
+        },
+      ],
+    },
+  },
+
+  "need-for-speed-2015": {
+    slug: "need-for-speed-2015",
+    source: "ea-official",
+    about: {
+      title: "Acerca del juego",
+      description:
+        "Need for Speed™ (2015), desarrollado por Ghost Games, reinventa la saga con carreras nocturnas en Ventura Bay: personaliza coches al detalle, compite en eventos callejeros, huye de la policía y conecta con amigos en un mundo abierto pensado para el estilo urbano y las persecuciones cinematográficas.",
+      platforms: "PC, PlayStation 4, Xbox One",
+      languages:
+        "Checo, Alemán, Inglés, Español, Francés, Italiano, Holandés, Sueco, Danés, Noruego, Finlandés, Polaco, Portugués, Ruso, Japonés",
+      publisher: "Electronic Arts",
+      releaseDate: "3 mar 2015",
+    },
+    systemRequirements: {
+      title: "Requisitos del sistema",
+      osLabel: "Windows",
+      minimum: [
+        { label: "Sistema operativo", value: "Windows 7 (64 bits)" },
+        { label: "Procesador", value: "Core i5-4690 o AMD FX-8320" },
+        { label: "Memoria", value: "8 GB RAM" },
+        { label: "Disco duro", value: "30 GB de espacio libre" },
+        {
+          label: "Tarjeta gráfica",
+          value:
+            "2 GB, compatible con DirectX 11 (GeForce GTX 760 / Radeon R7 265)",
+        },
+        { label: "Tarjeta de sonido", value: "Compatible con DirectX 11" },
+      ],
+      recommended: [
+        { label: "Sistema operativo", value: "Windows 10 (64 bits)" },
+        {
+          label: "Procesador",
+          value: "Core i5-4690 o AMD FX-8350 de ocho núcleos",
+        },
+        { label: "Memoria", value: "8 GB RAM" },
+        { label: "Disco duro", value: "30 GB de espacio libre" },
+        {
+          label: "Tarjeta gráfica",
+          value:
+            "4 GB o superior, compatible con DirectX 11 (GeForce GTX 970 / Radeon R9 290)",
+        },
+        { label: "Tarjeta de sonido", value: "Compatible con DirectX 11" },
+      ],
+    },
+    rating: {
+      system: "pegi",
+      age: 12,
+      ageBadgeSrc: `${NFS2015}/pegi12-icono.png`,
+      descriptors: [
+        {
+          id: "violence",
+          label: "Violence",
+          iconSrc: `${NFS2015}/violence-Icono.png`,
         },
       ],
     },

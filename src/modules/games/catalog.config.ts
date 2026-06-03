@@ -28,7 +28,8 @@ export const NFS_CATALOG: NfsCatalogEntry[] = [
   },
   {
     label: "Need for Speed™",
-    href: "https://www.ea.com/es-es/games/need-for-speed/need-for-speed",
+    href: "/need-for-speed-2015",
+    slug: "need-for-speed-2015",
     releaseDate: "2015-03-03",
   },
   {
