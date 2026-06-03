@@ -38,7 +38,8 @@ export const NFS_CATALOG: NfsCatalogEntry[] = [
   },
   {
     label: "Need for Speed™ Rivals",
-    href: "https://www.ea.com/es-es/games/need-for-speed/need-for-speed-rivals",
+    href: "/need-for-speed-rivals",
+    slug: "need-for-speed-rivals",
     releaseDate: "2013-11-19",
   },
   {

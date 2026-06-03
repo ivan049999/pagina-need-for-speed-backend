@@ -15,6 +15,10 @@ const UNDERCOVER =
 const WORLD = "/images/juegos-need-for-speed/Need-For-Speed-World";
 const HP =
   "/images/juegos-need-for-speed/Need-For-Speed-Hot-Pursuit-2010";
+const SHIFT = "/images/juegos-need-for-speed/Need-For-Speed-Shift";
+const NITRO = "/images/juegos-need-for-speed/Need-For-Speed-Nitro";
+const THE_RUN = "/images/juegos-need-for-speed/Need-For-Speed-The-Run";
+const RIVALS = "/images/juegos-need-for-speed/Need-For-Speed-Rivals";
 const SHIFT2 =
   "/images/juegos-need-for-speed/Need-For-Speed-Shift-2-Unleashed";
 /** Fichas verificadas (EA / Steam / documentación oficial). */
@@ -76,7 +80,20 @@ export const GAME_DETAILS_ENTRIES: Record<string, GameDetails> = {
         { label: "Unidad óptica", value: "Unidad de CD-ROM 8x" },
       ],
     },
-    rating: pegiRating(12, U),
+    rating: {
+      system: "pegi",
+      age: 7,
+      ageBadgeSrc:
+        "/images/juegos-need-for-speed/Need-For-Speed-Underground/Pegi-7-Icono.png",
+      descriptors: [
+        {
+          id: "violence",
+          label: "Violence",
+          iconSrc:
+            "/images/juegos-need-for-speed/Need-For-Speed-Underground/violence-Icono.png",
+        },
+      ],
+    },
   },
 
   "need-for-speed-underground-2": {
@@ -119,7 +136,20 @@ export const GAME_DETAILS_ENTRIES: Record<string, GameDetails> = {
         { label: "Tarjeta de sonido", value: "Compatible con DirectX 9.0c" },
       ],
     },
-    rating: pegiRating(12, U2),
+    rating: {
+      system: "pegi",
+      age: 7,
+      ageBadgeSrc:
+        "/images/juegos-need-for-speed/Need-For-Speed-Underground-2/Pegi-7-Icono.png",
+      descriptors: [
+        {
+          id: "violence",
+          label: "Violence",
+          iconSrc:
+            "/images/juegos-need-for-speed/Need-For-Speed-Underground-2/violence-Icono.png",
+        },
+      ],
+    },
   },
 
   "need-for-speed-most-wanted-2005": {
@@ -162,7 +192,20 @@ export const GAME_DETAILS_ENTRIES: Record<string, GameDetails> = {
         { label: "Tarjeta de sonido", value: "Compatible con DirectX 9.0c" },
       ],
     },
-    rating: pegiRating(12, MW),
+    rating: {
+      system: "pegi",
+      age: 7,
+      ageBadgeSrc:
+        "/images/juegos-need-for-speed/Need-For-Speed-Most-Wanted-2005/Pegi-7-Icono.png",
+      descriptors: [
+        {
+          id: "violence",
+          label: "Violence",
+          iconSrc:
+            "/images/juegos-need-for-speed/Need-For-Speed-Most-Wanted-2005/violence-Icono.png",
+        },
+      ],
+    },
   },
 
   "need-for-speed-carbon": {
@@ -206,7 +249,20 @@ export const GAME_DETAILS_ENTRIES: Record<string, GameDetails> = {
         { label: "Tarjeta de sonido", value: "Compatible con DirectX 9.0c" },
       ],
     },
-    rating: pegiRating(12, CARBON),
+    rating: {
+      system: "pegi",
+      age: 7,
+      ageBadgeSrc:
+        "/images/juegos-need-for-speed/Need-For-Speed-Carbon/Pegi-7-Icono.png",
+      descriptors: [
+        {
+          id: "violence",
+          label: "Violence",
+          iconSrc:
+            "/images/juegos-need-for-speed/Need-For-Speed-Carbon/violence-Icono.png",
+        },
+      ],
+    },
   },
 
   "need-for-speed-prostreet": {
@@ -253,7 +309,20 @@ export const GAME_DETAILS_ENTRIES: Record<string, GameDetails> = {
         { label: "Tarjeta de sonido", value: "Compatible con DirectX 9.0c" },
       ],
     },
-    rating: pegiRating(12, PROSTREET),
+    rating: {
+      system: "pegi",
+      age: 7,
+      ageBadgeSrc:
+        "/images/juegos-need-for-speed/Need-For-Speed-Pro-Street/Pegi-7-Icono.png",
+      descriptors: [
+        {
+          id: "violence",
+          label: "Violence",
+          iconSrc:
+            "/images/juegos-need-for-speed/Need-For-Speed-Pro-Street/violence-Icono.png",
+        },
+      ],
+    },
   },
 
   "need-for-speed-undercover": {
@@ -300,7 +369,18 @@ export const GAME_DETAILS_ENTRIES: Record<string, GameDetails> = {
         { label: "Tarjeta de sonido", value: "Compatible con DirectX 9.0c" },
       ],
     },
-    rating: pegiRating(12, UNDERCOVER),
+    rating: {
+      system: "pegi",
+      age: 7,
+      ageBadgeSrc: `${UNDERCOVER}/Pegi-7-Icono.png`,
+      descriptors: [
+        {
+          id: "violence",
+          label: "Violence",
+          iconSrc: `${UNDERCOVER}/violence-Icono.png`,
+        },
+      ],
+    },
   },
 
   "need-for-speed-shift": {
@@ -346,7 +426,18 @@ export const GAME_DETAILS_ENTRIES: Record<string, GameDetails> = {
         { label: "Tarjeta de sonido", value: "Compatible con DirectX 9.0c" },
       ],
     },
-    rating: pegiRating(7, CARBON),
+    rating: {
+      system: "pegi",
+      age: 7,
+      ageBadgeSrc: `${SHIFT}/Pegi-7-Icono.png`,
+      descriptors: [
+        {
+          id: "violence",
+          label: "Violence",
+          iconSrc: `${CARBON}/violence-Icono.png`,
+        },
+      ],
+    },
   },
 
   "need-for-speed-nitro": {
@@ -392,7 +483,18 @@ export const GAME_DETAILS_ENTRIES: Record<string, GameDetails> = {
         },
       ],
     },
-    rating: pegiRating(7, CARBON),
+    rating: {
+      system: "pegi",
+      age: 7,
+      ageBadgeSrc: `${NITRO}/Pegi-7-Icono.png`,
+      descriptors: [
+        {
+          id: "violence",
+          label: "Violence",
+          iconSrc: `${CARBON}/violence-Icono.png`,
+        },
+      ],
+    },
   },
 
   "need-for-speed-world": {
@@ -484,7 +586,10 @@ export const GAME_DETAILS_ENTRIES: Record<string, GameDetails> = {
         { label: "Tarjeta de sonido", value: "Compatible con DirectX 9.0c" },
       ],
     },
-    rating: pegiRating(12, HP),
+    rating: {
+      ...pegiRating(7, HP),
+      ageBadgeSrc: `${HP}/Pegi-7-Icono.png`,
+    },
   },
 
   "need-for-speed-shift-2-unleashed": {
@@ -530,7 +635,20 @@ export const GAME_DETAILS_ENTRIES: Record<string, GameDetails> = {
         { label: "Tarjeta de sonido", value: "Compatible con DirectX 9.0c" },
       ],
     },
-    rating: pegiRating(12, SHIFT2),
+    rating: {
+      system: "pegi",
+      age: 12,
+      ageBadgeSrc:
+        "/images/juegos-need-for-speed/Need-For-Speed-Shift-2-Unleashed/pegi12-icono.png",
+      descriptors: [
+        {
+          id: "violence",
+          label: "Violence",
+          iconSrc:
+            "/images/juegos-need-for-speed/Need-For-Speed-Shift-2-Unleashed/violence-icono.png",
+        },
+      ],
+    },
   },
 
   "need-for-speed-the-run": {
@@ -577,7 +695,83 @@ export const GAME_DETAILS_ENTRIES: Record<string, GameDetails> = {
         { label: "Tarjeta de sonido", value: "Compatible con DirectX 9.0c" },
       ],
     },
-    rating: pegiRating(12, CARBON),
+    rating: {
+      system: "pegi",
+      age: 7,
+      ageBadgeSrc: `${THE_RUN}/Pegi-7-Icono.png`,
+      descriptors: [
+        {
+          id: "violence",
+          label: "Violence",
+          iconSrc: `${CARBON}/violence-Icono.png`,
+        },
+      ],
+    },
+  },
+
+  "need-for-speed-rivals": {
+    slug: "need-for-speed-rivals",
+    source: "ea-official",
+    about: {
+      title: "Acerca del juego",
+      description:
+        "Need for Speed™ Rivals, desarrollado por Ghost Games, enfrenta a corredores y policías en Redview County: elige tu bando, compite en eventos AllDrive interconectados, usa armas tácticas y vive persecuciones en mundo abierto con progresión online entre sesiones para demostrar quién domina la carretera.",
+      platforms:
+        "PC, PlayStation 3, PlayStation 4, Xbox 360, Xbox One",
+      languages:
+        "Checo, Alemán, Inglés, Español, Francés, Italiano, Holandés, Sueco, Danés, Noruego, Finlandés, Polaco, Portugués, Ruso, Japonés",
+      publisher: "Electronic Arts",
+      releaseDate: "19 nov 2013",
+    },
+    systemRequirements: {
+      title: "Requisitos del sistema",
+      osLabel: "Windows",
+      minimum: [
+        {
+          label: "Sistema operativo",
+          value: "Windows Vista SP2 (64 bits) / Windows 7",
+        },
+        {
+          label: "Procesador",
+          value: "Core 2 Duo a 2,4 GHz o Athlon X2 a 2,8 GHz",
+        },
+        { label: "Memoria", value: "4 GB RAM" },
+        { label: "Disco duro", value: "30 GB de espacio libre" },
+        {
+          label: "Tarjeta gráfica",
+          value:
+            "512 MB, compatible con DirectX 10 (GeForce 8800 GT / Radeon HD 3870)",
+        },
+        { label: "Tarjeta de sonido", value: "Compatible con DirectX 10" },
+      ],
+      recommended: [
+        { label: "Sistema operativo", value: "Windows 8 (64 bits)" },
+        {
+          label: "Procesador",
+          value: "Core i5 a 2,0 GHz o AMD FX-6100 de seis núcleos",
+        },
+        { label: "Memoria", value: "8 GB RAM" },
+        { label: "Disco duro", value: "30 GB de espacio libre" },
+        {
+          label: "Tarjeta gráfica",
+          value:
+            "2 GB o superior, compatible con DirectX 11 (GeForce GTX 660 / Radeon HD 7870)",
+        },
+        { label: "Tarjeta de sonido", value: "Compatible con DirectX 11" },
+      ],
+    },
+    rating: {
+      system: "pegi",
+      age: 12,
+      ageBadgeSrc: `${RIVALS}/pegi12-icono.png`,
+      descriptors: [
+        {
+          id: "violence",
+          label: "Violence",
+          iconSrc: `${RIVALS}/violence-Icono.png`,
+        },
+      ],
+    },
   },
 
   "need-for-speed-most-wanted-2012": {
@@ -628,6 +822,19 @@ export const GAME_DETAILS_ENTRIES: Record<string, GameDetails> = {
         { label: "Tarjeta de sonido", value: "Compatible con DirectX 11" },
       ],
     },
-    rating: pegiRating(12, CARBON),
+    rating: {
+      system: "pegi",
+      age: 12,
+      ageBadgeSrc:
+        "/images/juegos-need-for-speed/Need-For-Speed-Most-Wanted-2012/pegi12-icono.png",
+      descriptors: [
+        {
+          id: "violence",
+          label: "Violence",
+          iconSrc:
+            "/images/juegos-need-for-speed/Need-For-Speed-Most-Wanted-2012/violence-Icono.png",
+        },
+      ],
+    },
   },
 };
