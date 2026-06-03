@@ -179,4 +179,18 @@ export const GAME_PRICING: Record<string, GamePricingConfig> = {
       },
     },
   },
+  "need-for-speed-rivals": {
+    slug: "need-for-speed-rivals",
+    fallbackAmount: 9.99,
+    fallbackCurrency: "EUR",
+    sources: {
+      ea: {
+        url: "https://www.ea.com/es-es/games/need-for-speed/need-for-speed-rivals",
+      },
+      cex: {
+        url: "https://es.webuy.com/search?stext=need+for+speed+rivals",
+        productId: "need-for-speed-rivals",
+      },
+    },
+  },
 };
