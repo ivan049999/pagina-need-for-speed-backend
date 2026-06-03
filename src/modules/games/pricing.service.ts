@@ -55,28 +55,44 @@ async function fetchHtml(url: string): Promise<string> {
   }
 }
 
+function parseEaBadgeAmounts(html: string): number[] {
+  return [...html.matchAll(/PriceBadge_bold__[^>]+>(\d+[,.]\d{2})/g)]
+    .map((match) => parseEuropeanAmount(match[1]))
+    .filter((amount) => amount >= 1 && amount <= 150);
+}
+
 async function fetchEaPrice(config: GamePricingConfig): Promise<PriceQuote | null> {
   try {
     const html = await fetchHtml(config.sources.ea.url);
-    const badgeMatches = [
-      ...html.matchAll(/PriceBadge_bold__[^>]+>(\d+[,.]\d{2})</g),
-    ].map((match) => parseEuropeanAmount(match[1]));
 
+    const firstBadge = html.match(/PriceBadge_bold__[^>]+>(\d+[,.]\d{2})/);
+    if (firstBadge) {
+      const amount = parseEuropeanAmount(firstBadge[1]);
+      if (amount >= 1 && amount <= 150) {
+        return { amount, currency: "EUR", source: "ea" };
+      }
+    }
+
+    const badgeMatches = parseEaBadgeAmounts(html);
     if (badgeMatches.length > 0) {
       const amount = Math.min(...badgeMatches);
       return { amount, currency: "EUR", source: "ea" };
     }
 
-    const undergroundIdx = html.toLowerCase().indexOf("underground");
-    if (undergroundIdx >= 0) {
-      const window = html.slice(undergroundIdx, undergroundIdx + 20_000);
+    const slugHint = config.slug.replace(/^need-for-speed-/, "");
+    const pageIdx = html.toLowerCase().indexOf(slugHint);
+    if (pageIdx >= 0) {
+      const window = html.slice(pageIdx, pageIdx + 20_000);
       const eurMatch = window.match(/(\d+[,.]\d{2})\s*€/i);
       if (eurMatch) {
-        return {
-          amount: parseEuropeanAmount(eurMatch[1]),
-          currency: "EUR",
-          source: "ea",
-        };
+        const amount = parseEuropeanAmount(eurMatch[1]);
+        if (amount >= 1 && amount <= 150) {
+          return {
+            amount,
+            currency: "EUR",
+            source: "ea",
+          };
+        }
       }
     }
 
@@ -183,6 +199,8 @@ export async function getGamePrice(slug: string): Promise<GamePriceResponse> {
   const stale = quotes.length === 0;
   const data = buildResponse(config, quotes, stale);
 
-  cache.set(slug, { data, expiresAt: Date.now() + CACHE_TTL_MS });
+  if (quotes.length > 0) {
+    cache.set(slug, { data, expiresAt: Date.now() + CACHE_TTL_MS });
+  }
   return data;
 }

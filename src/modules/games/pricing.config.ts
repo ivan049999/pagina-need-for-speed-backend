@@ -188,8 +188,22 @@ export const GAME_PRICING: Record<string, GamePricingConfig> = {
         url: "https://www.ea.com/es-es/games/need-for-speed/need-for-speed-rivals",
       },
       cex: {
-        url: "https://es.webuy.com/search?stext=need+for+speed+rivals",
-        productId: "need-for-speed-rivals",
+        url: "https://es.webuy.com/product-detail/?id=5030934111171",
+        productId: "5030934111171",
+      },
+    },
+  },
+  "need-for-speed-most-wanted-2012": {
+    slug: "need-for-speed-most-wanted-2012",
+    fallbackAmount: 9.99,
+    fallbackCurrency: "EUR",
+    sources: {
+      ea: {
+        url: "https://www.ea.com/es-es/games/need-for-speed/need-for-speed-most-wanted-2012",
+      },
+      cex: {
+        url: "https://es.webuy.com/product-detail/?id=5030934046091",
+        productId: "5030934046091",
       },
     },
   },
