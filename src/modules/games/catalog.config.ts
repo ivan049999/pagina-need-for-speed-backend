@@ -23,7 +23,8 @@ export const NFS_CATALOG: NfsCatalogEntry[] = [
   },
   {
     label: "Need for Speed™ Payback",
-    href: "https://www.ea.com/es-es/games/need-for-speed/need-for-speed-payback",
+    href: "/need-for-speed-payback",
+    slug: "need-for-speed-payback",
     releaseDate: "2017-11-10",
   },
   {

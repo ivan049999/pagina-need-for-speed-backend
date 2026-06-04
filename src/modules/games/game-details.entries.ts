@@ -22,6 +22,7 @@ const RIVALS = "/images/juegos-need-for-speed/Need-For-Speed-Rivals";
 const NFS2015 = "/images/juegos-need-for-speed/Need-For-Speed-2015";
 const NO_LIMITS =
   "/images/juegos-need-for-speed/Need-For-Speed-No-Limits";
+const PAYBACK = "/images/juegos-need-for-speed/Need-For-Speed-Payback";
 const SHIFT2 =
   "/images/juegos-need-for-speed/Need-For-Speed-Shift-2-Unleashed";
 /** Fichas verificadas (EA / Steam / documentación oficial). */
@@ -765,6 +766,71 @@ export const GAME_DETAILS_ENTRIES: Record<string, GameDetails> = {
           id: "violence",
           label: "Violence",
           iconSrc: `${NFS2015}/violence-Icono.png`,
+        },
+      ],
+    },
+  },
+
+  "need-for-speed-payback": {
+    slug: "need-for-speed-payback",
+    source: "ea-official",
+    about: {
+      title: "Acerca del juego",
+      description:
+        "Need for Speed™ Payback, desarrollado por Ghost Games, te sumerge en Fortune Valley: vive una historia de venganza entre bandas rivales, personaliza coches al detalle, compite en carreras callejeras y desafíos off-road, y explora un mundo abierto lleno de eventos, coleccionables y persecuciones policiales.",
+      platforms: "PC, PlayStation 4, Xbox One",
+      languages:
+        "Checo, Alemán, Inglés, Español, Francés, Italiano, Holandés, Sueco, Danés, Noruego, Finlandés, Polaco, Portugués, Ruso, Japonés, Chino simplificado",
+      publisher: "Electronic Arts",
+      releaseDate: "10 nov 2017",
+    },
+    systemRequirements: {
+      title: "Requisitos del sistema",
+      osLabel: "Windows",
+      minimum: [
+        {
+          label: "Sistema operativo",
+          value: "Windows 7 de 64 bits o posterior",
+        },
+        {
+          label: "Procesador",
+          value:
+            "Intel Core i3-6300 a 3,8 GHz o AMD FX-8150 a 3,6 GHz con 4 hilos",
+        },
+        { label: "Memoria", value: "6 GB RAM" },
+        { label: "Disco duro", value: "30 GB de espacio libre" },
+        {
+          label: "Tarjeta gráfica",
+          value:
+            "Nvidia GeForce GTX 750 Ti o AMD Radeon HD 7850 (2 GB, compatible con DirectX 11)",
+        },
+        { label: "DirectX", value: "Versión 11" },
+      ],
+      recommended: [
+        { label: "Sistema operativo", value: "Windows 10 de 64 bits" },
+        {
+          label: "Procesador",
+          value: "Intel Core i5-4690 o AMD FX-8350 de ocho núcleos",
+        },
+        { label: "Memoria", value: "8 GB RAM" },
+        { label: "Disco duro", value: "30 GB de espacio libre" },
+        {
+          label: "Tarjeta gráfica",
+          value:
+            "Nvidia GeForce GTX 1060 o AMD Radeon RX 480 (compatible con DirectX 11)",
+        },
+        { label: "DirectX", value: "Versión 11" },
+      ],
+    },
+    rating: {
+      system: "pegi",
+      age: 12,
+      ageBadgeSrc: `${PAYBACK}/pegi12-icono.png`,
+      descriptors: [
+        {
+          id: "violence",
+          label: "Violence",
+          iconSrc: `${PAYBACK}/violence-Icono.png`,
         },
       ],
     },

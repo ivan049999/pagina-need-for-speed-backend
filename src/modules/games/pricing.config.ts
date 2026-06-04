@@ -207,6 +207,20 @@ export const GAME_PRICING: Record<string, GamePricingConfig> = {
       },
     },
   },
+  "need-for-speed-payback": {
+    slug: "need-for-speed-payback",
+    fallbackAmount: 29.99,
+    fallbackCurrency: "EUR",
+    sources: {
+      ea: {
+        url: "https://www.ea.com/es-es/games/need-for-speed/need-for-speed-payback",
+      },
+      cex: {
+        url: "https://es.webuy.com/search?stext=need+for+speed+payback",
+        productId: "need-for-speed-payback",
+      },
+    },
+  },
   "need-for-speed-rivals": {
     slug: "need-for-speed-rivals",
     fallbackAmount: 9.99,
