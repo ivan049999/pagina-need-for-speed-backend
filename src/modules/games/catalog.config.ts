@@ -8,7 +8,8 @@ import type { NfsCatalogEntry } from "./catalog.types.js";
 export const NFS_CATALOG: NfsCatalogEntry[] = [
   {
     label: "Need for Speed™ Unbound",
-    href: "https://www.ea.com/es-es/games/need-for-speed/need-for-speed-unbound",
+    href: "/need-for-speed-unbound",
+    slug: "need-for-speed-unbound",
     releaseDate: "2022-12-02",
   },
   {
