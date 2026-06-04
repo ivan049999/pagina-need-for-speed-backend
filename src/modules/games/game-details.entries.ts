@@ -23,6 +23,7 @@ const NFS2015 = "/images/juegos-need-for-speed/Need-For-Speed-2015";
 const NO_LIMITS =
   "/images/juegos-need-for-speed/Need-For-Speed-No-Limits";
 const PAYBACK = "/images/juegos-need-for-speed/Need-For-Speed-Payback";
+const HEAT = "/images/juegos-need-for-speed/Need-For-Speed-Heat";
 const SHIFT2 =
   "/images/juegos-need-for-speed/Need-For-Speed-Shift-2-Unleashed";
 /** Fichas verificadas (EA / Steam / documentación oficial). */
@@ -766,6 +767,67 @@ export const GAME_DETAILS_ENTRIES: Record<string, GameDetails> = {
           id: "violence",
           label: "Violence",
           iconSrc: `${NFS2015}/violence-Icono.png`,
+        },
+      ],
+    },
+  },
+
+  "need-for-speed-heat": {
+    slug: "need-for-speed-heat",
+    source: "ea-official",
+    about: {
+      title: "Acerca del juego",
+      description:
+        "Need for Speed™ Heat, desarrollado por Ghost Games, te lleva a Palm City: alterna carreras legales de día con persecuciones y eventos callejeros de noche, personaliza tu garaje, forma equipo con otros pilotos y escala en la lucha contra la policía corrupta y las bandas rivales en un mundo abierto lleno de adrenalina.",
+      platforms: "PC, PlayStation 4, Xbox One",
+      languages:
+        "Checo, Alemán, Inglés, Español, Francés, Italiano, Holandés, Sueco, Danés, Noruego, Finlandés, Polaco, Portugués, Ruso, Japonés, Chino simplificado",
+      publisher: "Electronic Arts",
+      releaseDate: "8 nov 2019",
+    },
+    systemRequirements: {
+      title: "Requisitos del sistema",
+      osLabel: "Windows",
+      minimum: [
+        { label: "Sistema operativo", value: "Windows 10 de 64 bits" },
+        {
+          label: "Procesador",
+          value: "Intel Core i5-4690 o AMD FX-8350 de ocho núcleos",
+        },
+        { label: "Memoria", value: "8 GB RAM" },
+        { label: "Disco duro", value: "50 GB de espacio libre" },
+        {
+          label: "Tarjeta gráfica",
+          value:
+            "Nvidia GeForce GTX 970 o AMD Radeon RX 480 (compatible con DirectX 12)",
+        },
+        { label: "DirectX", value: "Versión 12" },
+      ],
+      recommended: [
+        { label: "Sistema operativo", value: "Windows 10 de 64 bits" },
+        {
+          label: "Procesador",
+          value: "Intel Core i7-4790 o AMD Ryzen 3 1300X",
+        },
+        { label: "Memoria", value: "16 GB RAM" },
+        { label: "Disco duro", value: "50 GB de espacio libre" },
+        {
+          label: "Tarjeta gráfica",
+          value:
+            "Nvidia GeForce GTX 1660 o AMD Radeon RX 590 (compatible con DirectX 12)",
+        },
+        { label: "DirectX", value: "Versión 12" },
+      ],
+    },
+    rating: {
+      system: "pegi",
+      age: 12,
+      ageBadgeSrc: `${HEAT}/pegi12-icono.png`,
+      descriptors: [
+        {
+          id: "violence",
+          label: "Violence",
+          iconSrc: `${HEAT}/violence-Icono.png`,
         },
       ],
     },

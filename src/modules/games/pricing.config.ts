@@ -207,6 +207,20 @@ export const GAME_PRICING: Record<string, GamePricingConfig> = {
       },
     },
   },
+  "need-for-speed-heat": {
+    slug: "need-for-speed-heat",
+    fallbackAmount: 29.99,
+    fallbackCurrency: "EUR",
+    sources: {
+      ea: {
+        url: "https://www.ea.com/es-es/games/need-for-speed/need-for-speed-heat",
+      },
+      cex: {
+        url: "https://es.webuy.com/search?stext=need+for+speed+heat",
+        productId: "need-for-speed-heat",
+      },
+    },
+  },
   "need-for-speed-payback": {
     slug: "need-for-speed-payback",
     fallbackAmount: 29.99,

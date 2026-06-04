@@ -18,7 +18,8 @@ export const NFS_CATALOG: NfsCatalogEntry[] = [
   },
   {
     label: "Need for Speed™ Heat",
-    href: "https://www.ea.com/es-es/games/need-for-speed/need-for-speed-heat",
+    href: "/need-for-speed-heat",
+    slug: "need-for-speed-heat",
     releaseDate: "2019-11-08",
   },
   {
