@@ -24,6 +24,8 @@ const NO_LIMITS =
   "/images/juegos-need-for-speed/Need-For-Speed-No-Limits";
 const PAYBACK = "/images/juegos-need-for-speed/Need-For-Speed-Payback";
 const HEAT = "/images/juegos-need-for-speed/Need-For-Speed-Heat";
+const HP_REMASTERED =
+  "/images/juegos-need-for-speed/Need-For-Speed-Hot-Pursuit-Remastered";
 const SHIFT2 =
   "/images/juegos-need-for-speed/Need-For-Speed-Shift-2-Unleashed";
 /** Fichas verificadas (EA / Steam / documentación oficial). */
@@ -767,6 +769,68 @@ export const GAME_DETAILS_ENTRIES: Record<string, GameDetails> = {
           id: "violence",
           label: "Violence",
           iconSrc: `${NFS2015}/violence-Icono.png`,
+        },
+      ],
+    },
+  },
+
+  "need-for-speed-hot-pursuit-remastered": {
+    slug: "need-for-speed-hot-pursuit-remastered",
+    source: "ea-official",
+    about: {
+      title: "Acerca del juego",
+      description:
+        "Need for Speed™ Hot Pursuit Remastered, desarrollado por Stellar Entertainment, revive el clásico de Criterion con gráficos mejorados: persigue o escapa como policía o corredor en carreras de alto riesgo por carreteras costeras, desbloquea armas y vehículos exclusivos, y compite en modo individual o multijugador con toda la adrenalina del original.",
+      platforms:
+        "PC, PlayStation 4, Xbox One, Nintendo Switch",
+      languages:
+        "Checo, Alemán, Inglés, Español, Francés, Italiano, Holandés, Sueco, Danés, Noruego, Finlandés, Polaco, Portugués, Ruso, Japonés, Chino simplificado",
+      publisher: "Electronic Arts",
+      releaseDate: "6 nov 2020",
+    },
+    systemRequirements: {
+      title: "Requisitos del sistema",
+      osLabel: "Windows",
+      minimum: [
+        { label: "Sistema operativo", value: "Windows 10 de 64 bits" },
+        {
+          label: "Procesador",
+          value: "Intel Core i5-3570 o AMD FX-6350",
+        },
+        { label: "Memoria", value: "8 GB RAM" },
+        { label: "Disco duro", value: "30 GB de espacio libre" },
+        {
+          label: "Tarjeta gráfica",
+          value:
+            "Nvidia GeForce GTX 760 o AMD Radeon HD 7970 (compatible con DirectX 11)",
+        },
+        { label: "DirectX", value: "Versión 11" },
+      ],
+      recommended: [
+        { label: "Sistema operativo", value: "Windows 10 de 64 bits" },
+        {
+          label: "Procesador",
+          value: "Intel Core i5-4690 o AMD FX-8350 de ocho núcleos",
+        },
+        { label: "Memoria", value: "8 GB RAM" },
+        { label: "Disco duro", value: "30 GB de espacio libre" },
+        {
+          label: "Tarjeta gráfica",
+          value:
+            "Nvidia GeForce GTX 970 o AMD Radeon RX 480 (compatible con DirectX 11)",
+        },
+        { label: "DirectX", value: "Versión 11" },
+      ],
+    },
+    rating: {
+      system: "pegi",
+      age: 12,
+      ageBadgeSrc: `${HP_REMASTERED}/pegi12-icono.png`,
+      descriptors: [
+        {
+          id: "violence",
+          label: "Violence",
+          iconSrc: `${HP_REMASTERED}/violence-Icono.png`,
         },
       ],
     },

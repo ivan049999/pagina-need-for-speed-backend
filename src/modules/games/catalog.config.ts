@@ -13,7 +13,8 @@ export const NFS_CATALOG: NfsCatalogEntry[] = [
   },
   {
     label: "Need for Speed™ Hot Pursuit Remastered",
-    href: "https://www.ea.com/es-es/games/need-for-speed/need-for-speed-hot-pursuit-remastered",
+    href: "/need-for-speed-hot-pursuit-remastered",
+    slug: "need-for-speed-hot-pursuit-remastered",
     releaseDate: "2020-11-06",
   },
   {

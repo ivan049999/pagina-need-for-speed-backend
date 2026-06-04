@@ -207,6 +207,20 @@ export const GAME_PRICING: Record<string, GamePricingConfig> = {
       },
     },
   },
+  "need-for-speed-hot-pursuit-remastered": {
+    slug: "need-for-speed-hot-pursuit-remastered",
+    fallbackAmount: 29.99,
+    fallbackCurrency: "EUR",
+    sources: {
+      ea: {
+        url: "https://www.ea.com/es-es/games/need-for-speed/need-for-speed-hot-pursuit-remastered",
+      },
+      cex: {
+        url: "https://es.webuy.com/search?stext=need+for+speed+hot+pursuit+remastered",
+        productId: "need-for-speed-hot-pursuit-remastered",
+      },
+    },
+  },
   "need-for-speed-heat": {
     slug: "need-for-speed-heat",
     fallbackAmount: 29.99,
