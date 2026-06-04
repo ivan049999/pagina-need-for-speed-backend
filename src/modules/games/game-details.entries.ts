@@ -824,8 +824,8 @@ export const GAME_DETAILS_ENTRIES: Record<string, GameDetails> = {
     },
     rating: {
       system: "pegi",
-      age: 12,
-      ageBadgeSrc: `${HP_REMASTERED}/pegi12-icono.png`,
+      age: 7,
+      ageBadgeSrc: `${HP_REMASTERED}/Pegi-7-Icono.png`,
       descriptors: [
         {
           id: "violence",
